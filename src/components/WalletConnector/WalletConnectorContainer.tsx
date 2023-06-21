@@ -40,12 +40,12 @@ const WalletConnectorContainer = ({ isShown, onClose }: Props) => {
               <Dialog.Panel className="w-full max-w-md transform text-white overflow-hidden rounded-2xl bg-neutral-900 p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg md:text-2xl font-medium leading-6 ">
+                  className="text-lg md:text-2xl font-medium leading-6 text-center">
                   Connect to a wallet
                 </Dialog.Title>
                 <div className="mt-2">
                   <div className="flex my-4">
-                    <div className="w-1/2 py-3 flex flex-col justify-center items-center hover:scale-105 transition-transform cursor-pointer">
+                    <div className="w-full py-3 flex flex-col justify-center items-center hover:scale-105 transition-transform cursor-pointer">
                       <div
                         className="flex flex-col justify-center items-center"
                         onClick={() =>
@@ -64,26 +64,7 @@ const WalletConnectorContainer = ({ isShown, onClose }: Props) => {
                         </a>
                       </span>
                     </div>
-                    <div className="w-1/2 flex flex-col justify-center items-center hover:scale-105 transition-transform cursor-pointer">
-                      <div
-                        className="flex flex-col justify-center items-center"
-                        onClick={() =>
-                          connectWallet(WalletServiceProviders.BLADE)
-                        }>
-                        <img
-                          src="/images/blade-logo.png"
-                          alt="Blade Logo"
-                          // className="w-10 h-10"
-                          className="w-12 h-14"
-                        />
-                        <span className="mt-1 md:text-xl">Blade Wallet</span>
-                      </div>
-                      <span className="text-blue-600 underline text-xs">
-                        <a href="https://www.bladewallet.io/">
-                          Click here to download the app
-                        </a>
-                      </span>
-                    </div>
+                    
                   </div>
                 </div>
 
