@@ -40,6 +40,7 @@ const APP_CONFIG: HashConnectTypes.AppMetadata = {
   name: "dApp Example",
   description: "An example hedera dApp",
   icon: "https://absolute.url/to/icon.png",
+  url: 'https://qa.redemption.designbook.app/'
 };
 
 const useHashStore = ({ network, debug = false }: PropTypes) => {
