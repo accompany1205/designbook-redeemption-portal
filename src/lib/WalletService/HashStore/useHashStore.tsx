@@ -6,6 +6,7 @@ import {
   TransferTransaction,
   TransactionReceiptQuery,
   Hbar,
+  NftId,
 } from "@hashgraph/sdk";
 import { HashConnect, HashConnectTypes, MessageTypes } from "hashconnect";
 import { HashConnectConnectionState } from "hashconnect/dist/types";
@@ -17,6 +18,11 @@ import ApiClient from "../../../api/client";
 export interface PropTypes {
   network: string;
   debug?: boolean;
+}
+
+export interface ResponseType {
+  response: MessageTypes.TransactionResponse | undefined;
+  receipt: any;
 }
 
 export interface SavedPairingData {
@@ -35,6 +41,8 @@ export interface HashconnectContextAPI {
   pairingData: MessageTypes.ApprovePairing | null;
   acknowledgeData: MessageTypes.Acknowledge;
 }
+
+type TNetwork = 'testnet' | 'mainnet' | 'previewnet';
 
 const APP_CONFIG: HashConnectTypes.AppMetadata = {
   name: "dApp Example",
@@ -59,24 +67,86 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
     localStorage.getItem("hashpack") || "null"
   );
 
+  // const initializeHashConnect = useCallback(async () => {
+  //   try {
+  //     console.log("---------------------- initialized hash connect ----------------")
+  //     hashState.hashConnect = new HashConnect(debug);
+  //     if (!sessionData) {
+  //       //first init and store the private key for later
+  //       let initData = await hashState.hashConnect.init(APP_CONFIG);
+  //       const privateKey = initData.privKey;
+  //       if (debug) console.log("PRIVATE KEY: ", privateKey);
+
+  //       //then connect, storing the new topic for later
+  //       const state = await hashState.hashConnect.connect();
+  //       if (debug) console.log("STATE: ", state);
+  //       hashState.hashConnect.findLocalWallets();
+
+  //       const topic = state.topic;
+
+  //       //generate a pairing string, which you can display and generate a QR code from
+  //       const pairingString = hashState.hashConnect.generatePairingString(
+  //         state,
+  //         network,
+  //         debug ?? false
+  //       );
+  //       setState((exState) => ({
+  //         ...exState,
+  //         topic,
+  //         privKey: privateKey,
+  //         pairingString,
+  //         state: HashConnectConnectionState.Disconnected,
+  //       }));
+  //     } else {
+  //       hashState.hashConnect = new HashConnect(debug);
+  //       await hashState.hashConnect.init(APP_CONFIG, sessionData?.privKey);
+
+  //       const state = await hashState.hashConnect.connect(
+  //         sessionData?.pairingData.topic,
+  //         sessionData?.pairingData.metadata
+  //       );
+
+  //       hashState.hashConnect.findLocalWallets();
+
+  //       const pairingString = hashState.hashConnect.generatePairingString(
+  //         state,
+  //         network,
+  //         debug
+  //       );
+
+  //       setState((exState) => ({
+  //         ...exState,
+  //         pairingString,
+  //         availableExtension: sessionData?.metadata,
+  //         pairingData: sessionData?.pairingData,
+  //         state: HashConnectConnectionState.Connected,
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, [debug, network]);
   const initializeHashConnect = useCallback(async () => {
     try {
-      hashState.hashConnect = new HashConnect(debug);
-      if (!sessionData) {
+      console.log("---------------------- initialized hash connect ----------------")
+      // hashState.hashConnect = new HashConnect(debug);
+      const hashConnectInstance = new HashConnect(debug);
+      // if (!sessionData) {
         //first init and store the private key for later
-        let initData = await hashState.hashConnect.init(APP_CONFIG);
-        const privateKey = initData.privKey;
+        let initData = await hashConnectInstance.init(APP_CONFIG, 'testnet');
+        const privateKey = initData.encryptionKey;
         if (debug) console.log("PRIVATE KEY: ", privateKey);
 
+        console.log({initData})
         //then connect, storing the new topic for later
-        const state = await hashState.hashConnect.connect();
+        const state = await hashConnectInstance.connect();
         if (debug) console.log("STATE: ", state);
-        hashState.hashConnect.findLocalWallets();
+        hashConnectInstance.findLocalWallets();
 
-        const topic = state.topic;
+        const { topic } = initData;
 
         //generate a pairing string, which you can display and generate a QR code from
-        const pairingString = hashState.hashConnect.generatePairingString(
+        const pairingString = hashConnectInstance.generatePairingString(
           state,
           network,
           debug ?? false
@@ -87,36 +157,40 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
           privKey: privateKey,
           pairingString,
           state: HashConnectConnectionState.Disconnected,
+          hashConnect: hashConnectInstance,
         }));
-      } else {
-        hashState.hashConnect = new HashConnect(debug);
-        await hashState.hashConnect.init(APP_CONFIG, sessionData?.privKey);
+        
+      // } else {
+      //   // hashState.hashConnect = new HashConnect(debug);
+      //   const hashConnectInstance = new HashConnect(debug);
+      //   await hashConnectInstance.init(APP_CONFIG, (sessionData.privKey || 'testnet') as TNetwork,);
 
-        const state = await hashState.hashConnect.connect(
-          sessionData?.pairingData.topic,
-          sessionData?.pairingData.metadata
-        );
+      //   const state = await hashConnectInstance.connect(
+      //     sessionData?.pairingData.topic,
+      //     sessionData?.pairingData.metadata
+      //   );
 
-        hashState.hashConnect.findLocalWallets();
+      //   hashConnectInstance.findLocalWallets();
 
-        const pairingString = hashState.hashConnect.generatePairingString(
-          state,
-          network,
-          debug
-        );
+      //   const pairingString = hashConnectInstance.generatePairingString(
+      //     state,
+      //     network,
+      //     debug
+      //   );
 
-        setState((exState) => ({
-          ...exState,
-          pairingString,
-          availableExtension: sessionData?.metadata,
-          pairingData: sessionData?.pairingData,
-          state: HashConnectConnectionState.Connected,
-        }));
-      }
+      //   setState((exState) => ({
+      //     ...exState,
+      //     pairingString,
+      //     availableExtension: sessionData?.metadata,
+      //     pairingData: sessionData?.pairingData,
+      //     state: HashConnectConnectionState.Connected,
+      //     hashConnect: hashConnectInstance,
+      //   }));
+      // }
     } catch (error) {
       console.log(error);
     }
-  }, [debug, network]);
+  }, [debug, network, sessionData]);
 
   const foundExtensionEventHandler = useCallback(
     (data: HashConnectTypes.WalletMetadata) => {
@@ -151,8 +225,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
         privKey: hashState.privKey!,
       });
     },
-    [debug, saveDataInLocalStorage]
-    // [debug]
+    [debug, saveDataInLocalStorage, hashState.availableExtension, hashState.privKey,]
   );
 
   const acknowledgeEventHandler = useCallback(
@@ -177,7 +250,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
     hashState.hashConnect.foundExtensionEvent.on(foundExtensionEventHandler);
     hashState.hashConnect.pairingEvent.on(pairingEventHandler);
     hashState.hashConnect.acknowledgeMessageEvent.on(acknowledgeEventHandler);
-    hashState.hashConnect.connectionStatusChange.on(onStatusChange);
+    hashState.hashConnect.connectionStatusChangeEvent.on(onStatusChange);
     return () => {
       if (!hashState.hashConnect) return;
       hashState.hashConnect.foundExtensionEvent.off(foundExtensionEventHandler);
@@ -193,6 +266,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       toast.error("Already connected");
       return false;
     }
+    console.log("2222222222222222", hashState)
     if (!hashState.availableExtension) {
       toast.error("Could not connect to the Hashpack extension");
       return false;
@@ -202,7 +276,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       toast.error("An unexpected error occoured. Please reload");
       return false;
     }
-    hashState.hashConnect.connectToLocalWallet(hashState.pairingString!);
+    hashState.hashConnect.connectToLocalWallet();
     return true;
   };
 
@@ -251,7 +325,6 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       );
 
       let signer = await hashState.hashConnect.getSigner(provider);
-
       //Create the transfer transaction for the user not to pay
       const sendHbar = await new TransferTransaction()
         .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
@@ -260,32 +333,27 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
           Hbar.fromTinybars(150000000)
         )
         .execute(client);
-
       const transactionReceipt = await sendHbar.getReceipt(client);
       console.log(
         "The transfer transaction from brand account to the new account was: " +
           transactionReceipt.status.toString()
       );
-
       let associateBobTx = await new TokenAssociateTransaction()
         .setAccountId(hashState.pairingData.accountIds[0])
         .setTokenIds([hedera_token_id])
         .freezeWithSigner(signer);
-
       let res1 = await associateBobTx.executeWithSigner(signer);
-
       let tokenTransferTx = await new TransferTransaction()
         .addNftTransfer(
-          hedera_token_id,
-          serial_number,
+          // hedera_token_id,
+          // serial_number,
+          new NftId(hedera_token_id, serial_number),
           treasuryId,
           hashState.pairingData.accountIds[0]
         )
         .freezeWith(client)
         .sign(treasuryKey);
-
       let res = await tokenTransferTx.execute(client);
-
       let tokenTransferRx = await res.getReceipt(client);
 
       if (tokenTransferRx.status.toString() === "SUCCESS") {

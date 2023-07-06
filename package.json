@@ -1,8 +1,8 @@
 {
-  "name": "hashconnect",
+  "name": "redemption-partal",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://designbook.app/",
+  "homepage": ".",
   "dependencies": {
     "@bladelabs/blade-web3.js": "^0.9.13",
     "@hashgraph/sdk": "^2.14.2",
@@ -16,7 +16,7 @@
     "@types/react-dom": "^17.0.17",
     "axios": "^1.1.3",
     "fs": "^0.0.1-security",
-    "hashconnect": "^0.1.10",
+    "hashconnect": "^0.2.3",
     "net": "^1.0.2",
     "path": "^0.12.7",
     "query-string": "^7.1.1",

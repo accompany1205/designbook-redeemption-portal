@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { HashConnectAPIProvider } from "./lib/HashConnectProvider";
+// import { HashConnectAPIProvider } from "./lib/HashConnectProvider";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Home from "./pages/Home";

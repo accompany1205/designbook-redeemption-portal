@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import GlowButton from "../components/buttons/GlowButton";
-import { useHashConnect } from "../lib/HashConnectProvider";
+// import { useHashConnect } from "../lib/HashConnectProvider";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { useCookies } from "react-cookie";
