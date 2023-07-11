@@ -21,7 +21,7 @@ export interface WalletContextType {
 const WalletContext = createContext<WalletContextType>({
   provider: undefined,
   accountId: undefined,
-  network: "testnet",
+  network: process.env.REACT_APP_HEDERA_NETWORK || "",
   claimNft: async () => {},
   returnNft: async () => {},
   connectWallet: async () => {},

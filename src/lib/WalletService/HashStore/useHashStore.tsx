@@ -133,7 +133,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       const hashConnectInstance = new HashConnect(debug);
       // if (!sessionData) {
         //first init and store the private key for later
-        let initData = await hashConnectInstance.init(APP_CONFIG, 'testnet');
+        let initData = await hashConnectInstance.init(APP_CONFIG, (process.env.REACT_APP_HEDERA_NETWORK) as TNetwork);
         const privateKey = initData.encryptionKey;
         if (debug) console.log("PRIVATE KEY: ", privateKey);
 
@@ -266,7 +266,6 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       toast.error("Already connected");
       return false;
     }
-    console.log("2222222222222222", hashState)
     if (!hashState.availableExtension) {
       toast.error("Could not connect to the Hashpack extension");
       return false;
@@ -312,14 +311,14 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
 
       const { serial_number, hedera_token_id, hedera_id, hedera_private_key } =
         data;
-      const client = Client.forTestnet();
+      const client = process.env.REACT_APP_HEDERA_NETWORK == 'mainnet' ? Client.forMainnet() : Client.forTestnet();
 
       const treasuryId = AccountId.fromString(hedera_id);
       const treasuryKey = PrivateKey.fromString(hedera_private_key);
       client.setOperator(treasuryId, treasuryKey);
 
       let provider = hashState.hashConnect.getProvider(
-        "testnet",
+        process.env.REACT_APP_HEDERA_NETWORK || "",
         hashState.pairingData.topic,
         hashState.pairingData.accountIds[0]
       );
@@ -395,13 +394,13 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       const { serial_number, hedera_token_id, hedera_id, hedera_private_key } =
         data;
       let provider = hashState.hashConnect.getProvider(
-        "testnet",
+        process.env.REACT_APP_HEDERA_NETWORK || "",
         hashState.pairingData.topic,
         hashState.pairingData.accountIds[0]
       );
       let signer = await hashState.hashConnect.getSigner(provider);
 
-      const client = Client.forTestnet();
+      const client = process.env.REACT_APP_HEDERA_NETWORK == 'mainnet' ? Client.forMainnet() : Client.forTestnet();
 
       const treasuryId = AccountId.fromString(hedera_id);
       const treasuryKey = PrivateKey.fromString(hedera_private_key);

@@ -12,7 +12,7 @@ type Props = {};
 
 const WalletProvider = (props: { children: React.ReactNode }) => {
   const bladeStore = useBladeStore();
-  const hashStore = useHashStore({ network: "testnet", debug: false });
+  const hashStore = useHashStore({ network: process.env.REACT_APP_HEDERA_NETWORK || "", debug: false });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const currentlyConnected = useMemo(() => {
@@ -136,7 +136,7 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
         claimNft: claimNft,
         returnNft: returnNft,
         disconnectWallet,
-        network: "testnet",
+        network: process.env.REACT_APP_HEDERA_NETWORK || "",
         accountId: currentlyConnected?.accountId,
         provider: currentlyConnected?.provider,
         toggleConnectWalletModal: () => setIsModalOpen(!isModalOpen),
