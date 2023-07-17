@@ -7,6 +7,7 @@ import {
   TransactionReceiptQuery,
   Hbar,
   NftId,
+  Signer,
 } from "@hashgraph/sdk";
 import { HashConnect, HashConnectTypes, MessageTypes } from "hashconnect";
 import { HashConnectConnectionState } from "hashconnect/dist/types";
@@ -323,7 +324,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
         hashState.pairingData.accountIds[0]
       );
 
-      let signer = await hashState.hashConnect.getSigner(provider);
+      let signer = hashState.hashConnect.getSigner(provider);
       //Create the transfer transaction for the user not to pay
       const sendHbar = await new TransferTransaction()
         .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
@@ -337,11 +338,12 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
         "The transfer transaction from brand account to the new account was: " +
           transactionReceipt.status.toString()
       );
+     
       let associateBobTx = await new TokenAssociateTransaction()
         .setAccountId(hashState.pairingData.accountIds[0])
         .setTokenIds([hedera_token_id])
-        .freezeWithSigner(signer);
-      let res1 = await associateBobTx.executeWithSigner(signer);
+        .freezeWithSigner(signer as Signer);
+      let res1 = await associateBobTx.executeWithSigner(signer as Signer);
       let tokenTransferTx = await new TransferTransaction()
         .addNftTransfer(
           // hedera_token_id,
@@ -427,9 +429,9 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
           hashState.pairingData.accountIds[0],
           hedera_id
         )
-        .freezeWithSigner(signer);
+        .freezeWithSigner(signer as Signer);
       
-      let res1 = await tokenTransferTx.executeWithSigner(signer);
+      let res1 = await tokenTransferTx.executeWithSigner(signer as Signer);
       
       const transferQuery = await new TransactionReceiptQuery()
         .setTransactionId(res1.transactionId)
