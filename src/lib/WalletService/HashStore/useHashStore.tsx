@@ -342,8 +342,8 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       let associateBobTx = await new TokenAssociateTransaction()
         .setAccountId(hashState.pairingData.accountIds[0])
         .setTokenIds([hedera_token_id])
-        .freezeWithSigner(signer as Signer);
-      let res1 = await associateBobTx.executeWithSigner(signer as Signer);
+        .freezeWithSigner(signer as unknown as Signer);
+      let res1 = await associateBobTx.executeWithSigner(signer as unknown as Signer);
       let tokenTransferTx = await new TransferTransaction()
         .addNftTransfer(
           // hedera_token_id,
@@ -429,9 +429,9 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
           hashState.pairingData.accountIds[0],
           hedera_id
         )
-        .freezeWithSigner(signer as Signer);
+        .freezeWithSigner(signer as unknown as Signer);
       
-      let res1 = await tokenTransferTx.executeWithSigner(signer as Signer);
+      let res1 = await tokenTransferTx.executeWithSigner(signer as unknown as Signer);
       
       const transferQuery = await new TransactionReceiptQuery()
         .setTransactionId(res1.transactionId)
