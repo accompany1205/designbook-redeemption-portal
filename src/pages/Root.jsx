@@ -32,7 +32,7 @@ function Root() {
               "url('/images/background/subheader2.jpg') center top / cover",
           }}
         >
-          <div className="text-white text-center md:text-right md:pr-20 py-20 md:py-32 lg:pt-40 lg:pb-36 2xl:pt-40 2xl:pb-36">
+          <div className="text-white text-center md:text-right md:pr-52 py-20 md:py-32 lg:pt-40 lg:pb-36 2xl:pt-40 2xl:pb-36">
             <h1 className="text-4xl md:text-6xl font-bold">
               {content[path].title}
             </h1>

@@ -24,18 +24,21 @@ function Home() {
   const state = useLocation().state;
 
   return (
-    <div className="flex flex-col items-center justify-center md:items-end md:pr-40">
+    <div className="flex flex-col items-center justify-center md:items-end md:pr-60">
       <div className="flex flex-col items-center justify-center">
-        <div className="mt-10">
+        <div className="md:mt-28">
           <ConnectWalletButton />
         </div>
-        <div className="my-8">
-          <p className="text-lg">
-            Wallet Provider: {provider} <br />
-            Wallet Number ID: {accountId}
+        <div className="my-8 md:mt-12 md:mb-24">
+          <p className="text-lg md:mb-4 font-bold text-gray-400">
+            <span className="text-gray-400">Wallet Provider:</span> {provider}
+
+          </p>
+          <p className="text-lg font-bold ">
+            <span className="text-gray-400">Wallet Number ID:</span> {accountId}
           </p>
         </div>
-        <div className="flex space-x-4 px-2">
+        <div className="flex space-x-20 px-2">
           <GlowButton onClick={() => claimNft(token)}>
             Redeem Your Certificate
           </GlowButton>
