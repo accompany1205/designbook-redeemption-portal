@@ -8,6 +8,7 @@ import { useCookies } from "react-cookie";
 import WalletContext, {
   WalletServiceProviders,
 } from "../lib/WalletService/WalletContext";
+import ConnectWalletButton from "../components/Header/ConnectWalletButton";
 
 function Home() {
   const [searchParams] = useSearchParams();
@@ -25,8 +26,11 @@ function Home() {
   return (
     <div className="flex flex-col items-center justify-center md:items-end md:pr-40">
       <div className="flex flex-col items-center justify-center">
+        <div className="mt-10">
+          <ConnectWalletButton />
+        </div>
         <div className="my-8">
-          <p>
+          <p className="text-lg">
             Wallet Provider: {provider} <br />
             Wallet Number ID: {accountId}
           </p>

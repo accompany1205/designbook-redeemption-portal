@@ -10,8 +10,8 @@ function DesktopHeader({ urlState }) {
       </div>
 
       <div className="flex space-x-6 lg:space-x-8 items-center">
-        <HeaderItem urlState={urlState} title="Home" to="/" />
-        <ConnectWalletButton />
+        {/* <HeaderItem urlState={urlState} title="Home" to="/" />
+        <ConnectWalletButton /> */}
       </div>
     </div>
   );
