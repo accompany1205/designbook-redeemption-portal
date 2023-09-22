@@ -41,7 +41,7 @@ const WalletConnectorContainer = ({ isShown, onClose }: Props) => {
                 <Dialog.Title
                   as="h3"
                   className="text-lg md:text-2xl font-medium leading-6 text-center">
-                  Connect to a wallet
+                  Connect your wallet
                 </Dialog.Title>
                 <div className="mt-2">
                   <div className="flex my-4">
