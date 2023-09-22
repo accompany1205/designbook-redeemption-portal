@@ -133,34 +133,34 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       // hashState.hashConnect = new HashConnect(debug);
       const hashConnectInstance = new HashConnect(debug);
       // if (!sessionData) {
-        //first init and store the private key for later
-        let initData = await hashConnectInstance.init(APP_CONFIG, (process.env.REACT_APP_HEDERA_NETWORK) as TNetwork);
-        const privateKey = initData.encryptionKey;
-        if (debug) console.log("PRIVATE KEY: ", privateKey);
+      //first init and store the private key for later
+      let initData = await hashConnectInstance.init(APP_CONFIG, (process.env.REACT_APP_HEDERA_NETWORK) as TNetwork);
+      const privateKey = initData.encryptionKey;
+      if (debug) console.log("PRIVATE KEY: ", privateKey);
 
-        console.log({initData})
-        //then connect, storing the new topic for later
-        const state = await hashConnectInstance.connect();
-        if (debug) console.log("STATE: ", state);
-        hashConnectInstance.findLocalWallets();
+      console.log({ initData })
+      //then connect, storing the new topic for later
+      const state = await hashConnectInstance.connect();
+      if (debug) console.log("STATE: ", state);
+      hashConnectInstance.findLocalWallets();
 
-        const { topic } = initData;
+      const { topic } = initData;
 
-        //generate a pairing string, which you can display and generate a QR code from
-        const pairingString = hashConnectInstance.generatePairingString(
-          state,
-          network,
-          debug ?? false
-        );
-        setState((exState) => ({
-          ...exState,
-          topic,
-          privKey: privateKey,
-          pairingString,
-          state: HashConnectConnectionState.Disconnected,
-          hashConnect: hashConnectInstance,
-        }));
-        
+      //generate a pairing string, which you can display and generate a QR code from
+      const pairingString = hashConnectInstance.generatePairingString(
+        state,
+        network,
+        debug ?? false
+      );
+      setState((exState) => ({
+        ...exState,
+        topic,
+        privKey: privateKey,
+        pairingString,
+        state: HashConnectConnectionState.Disconnected,
+        hashConnect: hashConnectInstance,
+      }));
+
       // } else {
       //   // hashState.hashConnect = new HashConnect(debug);
       //   const hashConnectInstance = new HashConnect(debug);
@@ -264,16 +264,16 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
 
   const connectToExtension = async () => {
     if (hashState.state === HashConnectConnectionState.Connected) {
-      toast.error("Already connected");
+      toast.error("Already connected", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
     if (!hashState.availableExtension) {
-      toast.error("Could not connect to the Hashpack extension");
+      toast.error("Could not connect to the Hashpack extension", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
 
     if (!hashState.hashConnect) {
-      toast.error("An unexpected error occoured. Please reload");
+      toast.error("An unexpected error occoured. Please reload", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
     hashState.hashConnect.connectToLocalWallet();
@@ -291,7 +291,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
 
   const claimNft = async (token: string) => {
     if (!hashState.pairingData || !hashState.hashConnect) {
-      toast.error("An unexpected error occoured. Reload and try again");
+      toast.error("An unexpected error occoured. Reload and try again", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
 
@@ -336,9 +336,9 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       const transactionReceipt = await sendHbar.getReceipt(client);
       console.log(
         "The transfer transaction from brand account to the new account was: " +
-          transactionReceipt.status.toString()
+        transactionReceipt.status.toString()
       );
-     
+
       let associateBobTx = await new TokenAssociateTransaction()
         .setAccountId(hashState.pairingData.accountIds[0])
         .setTokenIds([hedera_token_id])
@@ -368,14 +368,14 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
     } catch (err: any) {
       console.log("err", err);
 
-      toast.error("Could not claim nft through hash pack");
+      toast.error("Could not claim nft through hash pack", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
   };
 
   const returnNft = async (token: string) => {
     if (!hashState.pairingData || !hashState.hashConnect) {
-      toast.error("An unexpected error occoured. Reload and try again");
+      toast.error("An unexpected error occoured. Reload and try again", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
 
@@ -420,7 +420,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       const transactionReceipt = await sendHbar.getReceipt(client);
       console.log(
         "The transfer transaction from brand account to the new account was: " +
-          transactionReceipt.status.toString()
+        transactionReceipt.status.toString()
       );
       let tokenTransferTx = await new TransferTransaction()
         .addNftTransfer(
@@ -430,9 +430,9 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
           hedera_id
         )
         .freezeWithSigner(signer as unknown as Signer);
-      
+
       let res1 = await tokenTransferTx.executeWithSigner(signer as unknown as Signer);
-      
+
       const transferQuery = await new TransactionReceiptQuery()
         .setTransactionId(res1.transactionId)
         .execute(client)
@@ -444,12 +444,12 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
           status: "returned",
         });
       };
-      
+
 
       return true;
     } catch (err: any) {
       console.log("err", err);
-      toast.error("Could not return nft through hashpack");
+      toast.error("Could not return nft through hashpack", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
   };

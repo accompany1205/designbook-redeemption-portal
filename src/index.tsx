@@ -45,7 +45,7 @@ ReactDOM.render(
     {/* <HashConnectAPIProvider debug> */}
       <WalletProvider>
         <RouterProvider router={router} />
-        <ToastContainer />
+        <ToastContainer autoClose={5000}/>
       </WalletProvider>
     {/* </HashConnectAPIProvider> */}
   </React.StrictMode>,

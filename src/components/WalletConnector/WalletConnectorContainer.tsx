@@ -45,9 +45,9 @@ const WalletConnectorContainer = ({ isShown, onClose }: Props) => {
                 </Dialog.Title>
                 <div className="mt-2">
                   <div className="flex my-4">
-                    <div className="w-full py-3 flex flex-col justify-center items-center hover:scale-105 transition-transform cursor-pointer">
+                    <div className="w-full py-3 flex flex-col justify-center items-center">
                       <div
-                        className="flex flex-col justify-center items-center"
+                        className="flex flex-col justify-center items-center hover:scale-105 transition-transform cursor-pointer p-5 border border-white border-solid rounded-lg"
                         onClick={() =>
                           connectWallet(WalletServiceProviders.HASHPACK)
                         }>
@@ -58,13 +58,13 @@ const WalletConnectorContainer = ({ isShown, onClose }: Props) => {
                         />
                         <span className="mt-1 md:text-xl">Hash Wallet</span>
                       </div>
-                      <span className="text-blue-600 underline text-xs">
+                      <span className="text-blue-600 underline text-xs mt-10">
                         <a href="https://www.hashpack.app/download">
-                          Click here to download the app
+                          Or click on this link to download the app
                         </a>
                       </span>
                     </div>
-                    
+
                   </div>
                 </div>
 

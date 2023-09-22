@@ -48,11 +48,11 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (currentlyConnected?.provider === WalletServiceProviders.BLADE) {
-      toast.success("Successfully connected to blade wallet");
+      toast.success("Successfully connected to blade wallet!");
     } else if (
       currentlyConnected?.provider === WalletServiceProviders.HASHPACK
     ) {
-      toast.success("Successfully connected to hash pack wallet");
+      toast.success("Successfully connected to hash pack wallet!", { position: toast.POSITION.TOP_RIGHT });
     }
   }, [currentlyConnected?.provider]);
 
@@ -60,7 +60,7 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
     type: WalletServiceProviders = WalletServiceProviders.BLADE
   ) => {
     if (currentlyConnected?.provider) {
-      toast.error("You are already connected");
+      toast.error("You are already connected", { position: toast.POSITION.TOP_RIGHT });
       return;
     }
 
@@ -79,7 +79,7 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
     type: WalletServiceProviders = WalletServiceProviders.BLADE
   ) => {
     if (!currentlyConnected?.provider) {
-      toast.error("You are not connected to any extension.");
+      toast.error("You are not connected to any extension.", { position: toast.POSITION.TOP_RIGHT });
       return;
     }
     if (type === WalletServiceProviders.BLADE) {
@@ -91,40 +91,40 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
 
   const claimNft = async (token: string | null) => {
     if (!token) {
-      toast.error("No claim token in url.");
+      toast.error("No claim token in url.", { position: toast.POSITION.TOP_RIGHT });
       return;
     }
 
     if (currentlyConnected?.provider === WalletServiceProviders.BLADE) {
       if (await bladeStore.claimNft(token))
-        toast.success("Successfully claimed the nft through blade store");
+        toast.success("Successfully claimed the nft through blade store", { position: toast.POSITION.TOP_RIGHT });
     } else if (
       currentlyConnected?.provider === WalletServiceProviders.HASHPACK
     ) {
       if (await hashStore.claimNft(token))
-        toast.success("Successfully claimed the nft through hash store");
+        toast.success("Successfully claimed the nft through hash store", { position: toast.POSITION.TOP_RIGHT });
     } else {
-      toast.error("You need to connect to a wallet before claiming.");
+      toast.error("You need to connect to a wallet before claiming.", { position: toast.POSITION.TOP_RIGHT });
       setIsModalOpen(true);
     }
   };
 
   const returnNft = async (token: string | null) => {
     if (!token) {
-      toast.error("No claim token in url.");
+      toast.error("No claim token in url.", { position: toast.POSITION.TOP_RIGHT });
       return;
     }
 
     if (currentlyConnected?.provider === WalletServiceProviders.BLADE) {
       if (await bladeStore.returnNft(token))
-        toast.success("Successfully returned the nft through hash pack");
+        toast.success("Successfully returned the nft through hash pack", { position: toast.POSITION.TOP_RIGHT });
     } else if (
       currentlyConnected?.provider === WalletServiceProviders.HASHPACK
     ) {
       await hashStore.returnNft(token)
-        // toast.success("Successfully returned the nft through hash");
+      // toast.success("Successfully returned the nft through hash");
     } else {
-      toast.error("You need to connect to a wallet before returning.");
+      toast.error("You need to connect to a wallet before returning.", { position: toast.POSITION.TOP_RIGHT });
       setIsModalOpen(true);
     }
   };

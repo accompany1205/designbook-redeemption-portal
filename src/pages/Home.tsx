@@ -22,49 +22,27 @@ function Home() {
 
   const state = useLocation().state;
 
-  // useEffect(() => {
-  //   if (state) {
-  //     setSearchParams({ ...state });
-  //   }
-  // }, [state]);
-
-  // const handleCopy = () => {
-  //   navigator.clipboard.writeText(pairingString!);
-  // };
-
-  const checkNFTClickPermissions = (nftCallback: () => Promise<void>) => {
-    // // if (!isAuthenicated)
-    // //   return toast.error("Please login proceed with the action.");
-    // if (!availableExtension)
-    //   return toast.error(
-    //     "Please install Hash Connect extension from chrome web store to proceed with the action."
-    //   );
-    // if (!pairingData)
-    //   return toast.error(
-    //     "Please connect to Hash Connect extension to proceed with the action."
-    //   );
-    // nftCallback();
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="my-8">
-        <p>
-          Provider: {provider} <br />
-          AccountId: {accountId}
-        </p>
-      </div>
-      <div className="flex space-x-4 px-2">
-        <GlowButton onClick={() => claimNft(token)}>
-          Redeem Your Certificate
-        </GlowButton>
-        <GlowButton onClick={() => returnNft(token)}>
-          Return Your Certificate
-        </GlowButton>
-      </div>
+    <div className="flex flex-col items-center justify-center md:items-end md:pr-40">
+      <div className="flex flex-col items-center justify-center">
+        <div className="my-8">
+          <p>
+            Wallet Provider: {provider} <br />
+            Wallet Number ID: {accountId}
+          </p>
+        </div>
+        <div className="flex space-x-4 px-2">
+          <GlowButton onClick={() => claimNft(token)}>
+            Redeem Your Certificate
+          </GlowButton>
+          <GlowButton onClick={() => returnNft(token)}>
+            Return Your Certificate
+          </GlowButton>
+        </div>
 
-      {/* <button onClick={disconnectWallet} >Kill session</button>
+        {/* <button onClick={disconnectWallet} >Kill session</button>
       <button onClick={() => connectWallet(WalletServiceProviders.HASHPACK)} >Connect</button> */}
+      </div>
     </div>
   );
 }
