@@ -8,14 +8,6 @@ const content = {
     title: "Digital Certificate Portal",
     description: "Instantly Redeem or Return your NFT",
   },
-  "/auth/register": {
-    title: "Register",
-    description: "Register page description",
-  },
-  "/auth/login": {
-    title: "Login",
-    description: "Login page description",
-  },
 };
 
 function Root() {
@@ -24,8 +16,9 @@ function Root() {
 
   return (
     <>
-      <Header />
-      {content[path] && (
+      {path === "/" && <Header />}
+
+      {path === "/" && content[path] && (
         <section
           style={{
             background:
@@ -41,7 +34,7 @@ function Root() {
         </section>
       )}
       <Outlet />
-      <Footer />
+      {path === "/" && <Footer />}
     </>
   );
 }

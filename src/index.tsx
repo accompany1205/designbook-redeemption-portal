@@ -4,10 +4,11 @@ import ReactDOM from "react-dom";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Home from "./pages/Home";
-import Register from "./pages/Register";
+import Wallet from "./pages/Wallet";
 import Root from "./pages/Root";
-import Login from "./pages/Login";
+import Connect from "./pages/Connect";
 import { ToastContainer } from "react-toastify";
+import AuthProvider from "./contexts/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
 import AuthRoot from "./pages/AuthRoot";
 // import { WalletConnectionProvider } from "./auth/WalletConnectionProvider";
@@ -22,20 +23,20 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
       },
-      // {
-      //   path: "/auth",
-      //   element: <AuthRoot />,
-      //   children: [
-      //     {
-      //       path: "register",
-      //       element: <Register />,
-      //     },
-      //     {
-      //       path: "login",
-      //       element: <Login />,
-      //     },
-      //   ],
-      // },
+      {
+        path: "/wallet",
+        element: <AuthRoot />,
+        children: [
+          {
+            path: "info",
+            element: <Wallet />,
+          },
+          {
+            path: "connect",
+            element: <Connect />,
+          },
+        ],
+      },
     ],
   },
 ]);
@@ -43,10 +44,12 @@ const router = createBrowserRouter([
 ReactDOM.render(
   <React.StrictMode>
     {/* <HashConnectAPIProvider debug> */}
+    <AuthProvider>
       <WalletProvider>
         <RouterProvider router={router} />
-        <ToastContainer autoClose={5000}/>
+        <ToastContainer autoClose={5000} />
       </WalletProvider>
+    </AuthProvider>
     {/* </HashConnectAPIProvider> */}
   </React.StrictMode>,
   document.getElementById("root")
