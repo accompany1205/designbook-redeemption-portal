@@ -21,6 +21,13 @@ export const validateText = (text: string) => {
   if (text.trim().length === 0) return "This field is required"
   else return undefined
 }
+export function validateHederaAddress(address: string): boolean {
+  // The regex pattern for a valid Hedera address
+  const addressPattern = /^(0\.0\.\d+)$/;
+
+  // Test if the provided address matches the pattern
+  return addressPattern.test(address);
+}
 
 export const validatePhone = (phone: string) => {
   const re = /^\d{10}$/; // 10 digit number

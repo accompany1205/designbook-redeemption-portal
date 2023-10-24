@@ -21,19 +21,15 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <Connect />,
       },
       {
         path: "/wallet",
         element: <AuthRoot />,
         children: [
           {
-            path: "info",
+            index: true,
             element: <Wallet />,
-          },
-          {
-            path: "connect",
-            element: <Connect />,
           },
         ],
       },

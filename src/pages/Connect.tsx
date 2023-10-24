@@ -1,20 +1,21 @@
 // https://gigaland.io/Connect-2.html
 
 import React, { useState, useContext, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import {
   useLinkClickHandler,
   useLocation,
   useNavigate,
+  useSearchParams,
 } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../contexts/AuthContext";
-import usePost from "../api/usePost";
+import WalletContext from "../lib/WalletService/WalletContext";
 // import AuthContext from "../auth/WalletContext";
 import GlowButton from "../components/buttons/GlowButton";
 import TextInput from "../components/inputs/TextInput";
 import { validateEmail } from "../helpers/form-validators";
 import { MagicClient } from "../contexts/AuthContext";
+import Loader from "../components/Loader";
 
 function Connect() {
   const {
@@ -23,24 +24,39 @@ function Connect() {
     publicAddress,
     setPublicAddress,
     setUserMetadata,
+    setToken,
+    authMagic,
+    setAuthMagic,
   } = useContext(AuthContext);
+
+  const { provider, toggleConnectWalletModal } = useContext(WalletContext);
+
   const state = useLocation().state;
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("claim");
   // const [isValid, setValid ] = useState(true);
 
   useEffect(() => {
-    MagicClient.user.isLoggedIn().then(async (magicIsLoggedIn) => {
-      setLoggedIn(magicIsLoggedIn);
-      if (magicIsLoggedIn) {
-        const publicAddress = (await MagicClient.user.getMetadata())
-          .publicAddress;
-        setPublicAddress(publicAddress);
-        setUserMetadata(await MagicClient.user.getMetadata());
-        navigate("/wallet/info");
-      }
-    });
-  }, [isLoggedIn]);
+    if (!token) {
+      toast.error(validateEmail(email));
+      return;
+    } else {
+      setToken(token);
+    }
+  }, []);
+
+  useEffect(() => {}, [isLoggedIn]);
+
+  useEffect(() => {
+    if (provider) {
+      setAuthMagic(false);
+      setLoggedIn(true);
+      navigate("/wallet");
+    }
+  }, [provider]);
   const handleSubmit = async () => {
     try {
       if (validateEmail(email)) {
@@ -48,15 +64,40 @@ function Connect() {
         toast.error(validateEmail(email));
         return;
       }
+      setLoading(true);
       const res = await MagicClient.auth.loginWithEmailOTP({ email });
       if (res) {
-        setLoggedIn(true);
+        // setLoggedIn(true);
+        MagicClient.user.isLoggedIn().then(async (magicIsLoggedIn) => {
+          if (magicIsLoggedIn) {
+            const publicAddress = (await MagicClient.user.getMetadata())
+              .publicAddress;
+            setLoggedIn(magicIsLoggedIn);
+            setAuthMagic(true);
+            setPublicAddress(publicAddress);
+            setUserMetadata(await MagicClient.user.getMetadata());
+            navigate("/wallet");
+          }
+        });
       }
       console.log(res);
+      setLoading(false);
+
     } catch (e) {
       console.log(e);
+      setLoading(false);
     }
   };
+
+  const handleClickHashPack = () => {
+    console.log("handleClickHashPack", provider);
+    if (!provider) toggleConnectWalletModal();
+  };
+
+  if(loading){
+    return <Loader/>
+  }
+
   return (
     <section className="bg-[#F0E4FE]">
       <div className="flex items-center justify-center h-screen">
@@ -93,7 +134,10 @@ function Connect() {
             OR
           </div>
           <div className="flex justify-center mt-2 md:mt-4">
-            <div className="flex justify-center items-center rounded-[50px] border-[1px] border-solid border-[#C8C7C7] text-center py-3 w-4/5 text-[#696969] font-medium cursor-pointer">
+            <div
+              className="flex justify-center items-center rounded-[50px] border-[1px] border-solid border-[#C8C7C7] text-center py-3 w-4/5 text-[#696969] font-medium cursor-pointer"
+              onClick={() => handleClickHashPack()}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="21"

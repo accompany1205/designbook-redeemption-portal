@@ -1,40 +1,11 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-
-const content = {
-  "/": {
-    title: "Digital Certificate Portal",
-    description: "Instantly Redeem or Return your NFT",
-  },
-};
 
 function Root() {
-  // get the path
-  const path = useLocation().pathname;
 
   return (
-    <>
-      {path === "/" && <Header />}
-
-      {path === "/" && content[path] && (
-        <section
-          style={{
-            background:
-              "url('/images/background/subheader2.jpg') center top / cover",
-          }}
-        >
-          <div className="text-white text-center md:text-right md:pr-52 py-20 md:py-32 lg:pt-40 lg:pb-36 2xl:pt-40 2xl:pb-36">
-            <h1 className="text-4xl md:text-6xl font-bold">
-              {content[path].title}
-            </h1>
-            <p className="mt-2">{content[path].description}</p>
-          </div>
-        </section>
-      )}
+    <>    
       <Outlet />
-      {path === "/" && <Footer />}
     </>
   );
 }

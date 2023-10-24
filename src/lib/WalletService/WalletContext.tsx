@@ -14,7 +14,7 @@ export interface WalletContextType {
   claimNft: (token: string | null) => Promise<void>;
   returnNft: (token: string | null) => Promise<void>;
   connectWallet: (type: WalletServiceProviders) => Promise<void>;
-  disconnectWallet: () => Promise<void>;
+  disconnectWallet: (type: WalletServiceProviders) => Promise<void>;
   toggleConnectWalletModal: () => void;
 }
 
