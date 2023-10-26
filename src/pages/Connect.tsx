@@ -41,7 +41,7 @@ function Connect() {
 
   useEffect(() => {
     if (!token) {
-      toast.error(validateEmail(email));
+      // toast.error("No redemption token!");
       return;
     } else {
       setToken(token);
@@ -80,7 +80,6 @@ function Connect() {
           }
         });
       }
-      console.log(res);
       setLoading(false);
 
     } catch (e) {

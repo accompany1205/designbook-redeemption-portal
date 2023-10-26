@@ -177,6 +177,10 @@ function Wallet() {
             .addHbarTransfer(publicAddress, Hbar.fromTinybars(150000000))
             .execute(client);
           const transactionReceipt = await sendHbar.getReceipt(client);
+          console.log(
+            "The HBAR transfer transaction from brand account to the new account was: " +
+            transactionReceipt.status.toString()
+          );
           let associateBobTx = await new TokenAssociateTransaction()
             .setAccountId(publicAddress)
             .setTokenIds([hedera_token_id])
@@ -185,7 +189,11 @@ function Wallet() {
           let associateBobTxRes = await associateBobTx.executeWithSigner(
             magicWallet
           );
-
+          const associatedBobTxReceipt = await associateBobTxRes.getReceiptWithSigner(magicWallet);
+          console.log(
+            "The token associated transaction status: " +
+            associatedBobTxReceipt.status.toString()
+          );
           let tokenTransferTx = await new TransferTransaction()
             .addNftTransfer(
               new NftId(hedera_token_id, serial_number),
@@ -197,7 +205,6 @@ function Wallet() {
 
           let tokenTransferTxRes = await tokenTransferTx.execute(client);
           let tokenTransferRx = await tokenTransferTxRes.getReceipt(client);
-          console.log(tokenTransferRx, tokenTransferTxRes);
           if (tokenTransferRx.status.toString() === "SUCCESS") {
             await axios.post(
               `${process.env.REACT_APP_BACKEND_URL}change/status`,
@@ -210,6 +217,8 @@ function Wallet() {
           }
         }
         setLoading(false);
+      } else {
+        toast.error("No redemption token in the url!");
       }
     } catch (e) {
       console.log(e);
@@ -217,7 +226,80 @@ function Wallet() {
     }
     console.log("handleClickSend", token);
   };
-  const handleClickReturn = () => {};
+  const handleClickReturn = async () => {
+    try {
+      if (token) {
+        setLoading(true);
+        const res = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}nftdata`,
+          { redemptionUrl: token }
+        );
+        if (res && res.status === 200 && res.data) {
+          const {
+            serial_number,
+            hedera_token_id,
+            hedera_id,
+            hedera_private_key,
+          } = res.data;
+          const client =
+            process.env.REACT_APP_HEDERA_NETWORK == "mainnet"
+              ? Client.forMainnet()
+              : Client.forTestnet();
+
+          const { publicKeyDer } = await MagicClient.hedera.getPublicKey();
+          const magicSign = (message: any): any =>
+            MagicClient.hedera.sign(message);
+          const magicWallet = new MagicWallet(
+            publicAddress,
+            new MagicProvider(process.env.REACT_APP_HEDERA_NETWORK),
+            publicKeyDer,
+            magicSign,
+            () => {}
+          );
+          const treasuryId = AccountId.fromString(hedera_id);
+          const treasuryKey = PrivateKey.fromString(hedera_private_key);
+          client.setOperator(treasuryId, treasuryKey);
+          const sendHbar = await new TransferTransaction()
+            .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
+            .addHbarTransfer(publicAddress, Hbar.fromTinybars(150000000))
+            .execute(client);
+          const transactionReceipt = await sendHbar.getReceipt(client);
+          console.log(
+            "The HBAR transfer transaction from brand account to the new account was: " +
+            transactionReceipt.status.toString()
+          );
+
+          let tokenTransferTx = await new TransferTransaction()
+            .addNftTransfer(
+              new NftId(hedera_token_id, serial_number),
+              publicAddress,
+              treasuryId
+            )
+            .freezeWithSigner(magicWallet);
+
+          const tokenTransferTxRes = await tokenTransferTx.executeWithSigner(magicWallet);
+          const tokenTransferTxReceipt = await tokenTransferTxRes.getReceiptWithSigner(magicWallet);
+          console.log({tokenTransferTxReceipt});
+          if (tokenTransferTxReceipt.status.toString() === "SUCCESS") {
+            await axios.post(
+              `${process.env.REACT_APP_BACKEND_URL}change/status`,
+              {
+                redemptionUrl: token,
+                status: "returned",
+              }
+            );
+            getNft(publicAddress);
+          }
+        }
+        setLoading(false);
+      } else {
+        toast.error("No redemption token in the url!");
+      }
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+  };
 
   const sendNFT = async () => {
     console.log("sendModalShow");
