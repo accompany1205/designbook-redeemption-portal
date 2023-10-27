@@ -23,7 +23,7 @@ export const AuthContext = createContext<AuthContextState>(
   {} as AuthContextState
 );
 
-export const MagicClient = new Magic('pk_live_C8037E2E6520BBDF', {
+export const MagicClient = new Magic(process.env.REACT_APP_MAGIC_PRIVATE_KEY || "", {
     extensions: [
       new HederaExtension({
         network: 'testnet',

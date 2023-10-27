@@ -88,37 +88,39 @@ function Wallet() {
       `${process.env.REACT_APP_HEDERA_NET_BASEURL}api/v1/accounts/${addr}/nfts`
     );
     console.log("getNft: ", res);
-    if (res && res.status === 200 && res.data && res.data.nfts?.length > 0) {
+    if (res && res.status === 200 && res.data) {
       let collections = [];
-      let itr = 0;
-      for (const collection of res.data.nfts) {
-        let newNft: any = {};
-        for (let key in collection) {
-          if (
-            key === "account_id" ||
-            key === "serial_number" ||
-            key === "token_id"
-          ) {
-            newNft[key] = collection[key];
+      if (res.data.nfts?.length > 0) {
+        let itr = 0;
+        for (const collection of res.data.nfts) {
+          let newNft: any = {};
+          for (let key in collection) {
+            if (
+              key === "account_id" ||
+              key === "serial_number" ||
+              key === "token_id"
+            ) {
+              newNft[key] = collection[key];
+            }
+            if (key === "metadata") {
+              let str = atob(collection[key]);
+              str = str.replace("ipfs://", "");
+              console.log({ str });
+              const ipfsRes = await axios.get(`https://ipfs.io/ipfs/${str}`);
+              console.log(ipfsRes);
+  
+              newNft = {
+                ...newNft,
+                ...ipfsRes.data,
+                _ipfs: `ipfs://${str}`,
+                checked: false,
+              };
+            }
           }
-          if (key === "metadata") {
-            let str = atob(collection[key]);
-            str = str.replace("ipfs://", "");
-            console.log({ str });
-            const ipfsRes = await axios.get(`https://ipfs.io/ipfs/${str}`);
-            console.log(ipfsRes);
-
-            newNft = {
-              ...newNft,
-              ...ipfsRes.data,
-              _ipfs: `ipfs://${str}`,
-              checked: false,
-            };
-          }
+          collections.push({ ...newNft, id: itr });
+          itr++;
         }
-        collections.push({ ...newNft, id: itr });
-        itr++;
-      }
+      } 
       setCollection(collections);
     }
   };
@@ -181,19 +183,23 @@ function Wallet() {
             "The HBAR transfer transaction from brand account to the new account was: " +
             transactionReceipt.status.toString()
           );
-          let associateBobTx = await new TokenAssociateTransaction()
-            .setAccountId(publicAddress)
-            .setTokenIds([hedera_token_id])
-            .freezeWithSigner(magicWallet);
+          try {
+            let associateBobTx = await new TokenAssociateTransaction()
+              .setAccountId(publicAddress)
+              .setTokenIds([hedera_token_id])
+              .freezeWithSigner(magicWallet);
 
-          let associateBobTxRes = await associateBobTx.executeWithSigner(
-            magicWallet
-          );
-          const associatedBobTxReceipt = await associateBobTxRes.getReceiptWithSigner(magicWallet);
-          console.log(
-            "The token associated transaction status: " +
-            associatedBobTxReceipt.status.toString()
-          );
+            let associateBobTxRes = await associateBobTx.executeWithSigner(
+              magicWallet
+            );
+            const associatedBobTxReceipt = await associateBobTxRes.getReceiptWithSigner(magicWallet);
+            console.log(
+              "The token associated transaction status: " +
+              associatedBobTxReceipt.status.toString()
+            );
+          } catch (e) {
+            console.log(e)
+          }
           let tokenTransferTx = await new TransferTransaction()
             .addNftTransfer(
               new NftId(hedera_token_id, serial_number),
@@ -213,7 +219,10 @@ function Wallet() {
                 status: "redeemed",
               }
             );
-            getNft(publicAddress);
+            toast.success("Successfully claimed NFT!");
+            setTimeout(() => {
+              getNft(publicAddress);
+            }, 2000);
           }
         }
         setLoading(false);
@@ -288,7 +297,11 @@ function Wallet() {
                 status: "returned",
               }
             );
-            getNft(publicAddress);
+            setLoading(false);
+            toast.success("Successfully returned NFT!");
+            setTimeout(() => {
+              getNft(publicAddress);
+            }, 1000);
           }
         }
         setLoading(false);
@@ -298,6 +311,7 @@ function Wallet() {
     } catch (e) {
       console.log(e);
       setLoading(false);
+      toast.error("Failed to return NFT.");
     }
   };
 
@@ -319,7 +333,6 @@ function Wallet() {
         () => {}
       );
       const treasuryId = AccountId.fromString(publicAddress);
-
       let tokenTransferTx = await new TransferTransaction()
         .addNftTransfer(
           new NftId(activeNft.token_id, activeNft.serial_number),
@@ -327,17 +340,24 @@ function Wallet() {
           targetAddress
         )
         .freezeWithSigner(magicWallet);
-      let associateBobTxRes = await tokenTransferTx.executeWithSigner(
+      let tokenTransferTxRes = await tokenTransferTx.executeWithSigner(
         magicWallet
       );
-      const receipt = await associateBobTxRes.getReceiptWithSigner(magicWallet);
-      console.log({ receipt });
+      const receipt = await tokenTransferTxRes.getReceiptWithSigner(magicWallet);
       if (receipt.status.toString() === "SUCCESS") {
         console.log("1-", { receipt });
+        setActiveNFT(null);
+        toast.success("Successfully sent NFT!");
+        setTimeout(() => {
+          getNft(publicAddress);
+        }, 1000);
+      } else {
+        toast.error("Failed to send NFT.");
       }
       setLoading(false);
     } catch (e) {
       setLoading(false);
+      toast.error("Failed to send NFT.");
       console.log(e);
     }
 

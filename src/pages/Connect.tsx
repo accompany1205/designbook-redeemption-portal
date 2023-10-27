@@ -76,11 +76,15 @@ function Connect() {
             setAuthMagic(true);
             setPublicAddress(publicAddress);
             setUserMetadata(await MagicClient.user.getMetadata());
+            setLoading(false);
             navigate("/wallet");
+          } else {
+            setLoading(false);
           }
         });
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
 
     } catch (e) {
       console.log(e);
