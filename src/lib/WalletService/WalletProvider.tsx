@@ -91,41 +91,47 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
 
   const claimNft = async (token: string | null) => {
     if (!token) {
-      toast.error("No claim token in url.", { position: toast.POSITION.TOP_RIGHT });
-      return;
+      // toast.error("No claim token in url.", { position: toast.POSITION.TOP_RIGHT });
+      return false;
     }
 
     if (currentlyConnected?.provider === WalletServiceProviders.BLADE) {
       if (await bladeStore.claimNft(token))
         toast.success("Successfully claimed the nft through blade store", { position: toast.POSITION.TOP_RIGHT });
+        return true;
     } else if (
       currentlyConnected?.provider === WalletServiceProviders.HASHPACK
     ) {
       if (await hashStore.claimNft(token))
-        toast.success("Successfully claimed the nft through hash store", { position: toast.POSITION.TOP_RIGHT });
+        toast.success("Successfully claimed the nft through Hashpack", { position: toast.POSITION.TOP_RIGHT });
+        return true;
     } else {
       toast.error("You need to connect to a wallet before claiming.", { position: toast.POSITION.TOP_RIGHT });
       setIsModalOpen(true);
+      return false;
     }
   };
 
   const returnNft = async (token: string | null) => {
     if (!token) {
-      toast.error("No claim token in url.", { position: toast.POSITION.TOP_RIGHT });
-      return;
+      // toast.error("No claim token in url.", { position: toast.POSITION.TOP_RIGHT });
+      return false;
     }
 
     if (currentlyConnected?.provider === WalletServiceProviders.BLADE) {
       if (await bladeStore.returnNft(token))
         toast.success("Successfully returned the nft through hash pack", { position: toast.POSITION.TOP_RIGHT });
+        return true;
     } else if (
       currentlyConnected?.provider === WalletServiceProviders.HASHPACK
     ) {
       await hashStore.returnNft(token)
-      // toast.success("Successfully returned the nft through hash");
+      toast.success("Successfully returned the nft through Hashpack");
+      return true;
     } else {
       toast.error("You need to connect to a wallet before returning.", { position: toast.POSITION.TOP_RIGHT });
       setIsModalOpen(true);
+      return false;
     }
   };
 

@@ -37,15 +37,14 @@ function Wallet() {
   } = useContext(AuthContext);
   const { provider, accountId, claimNft, returnNft, disconnectWallet } =
     useContext(WalletContext);
-  console.log("token", token);
   const [balance, setBalance] = useState<number>(0);
-  console.log(userMetadata, publicAddress);
   const navigate = useNavigate();
   const [nftCollection, setCollection] = useState<any[]>([]);
   const [activeNft, setActiveNFT] = useState<any>(null);
   const [sentModalShow, setSendModalShow] = useState<boolean>(false);
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [nftClaimStatus, setNftClaimStatus] = useState<string>("none");
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -141,15 +140,25 @@ function Wallet() {
     console.log("handleClickDisconnect");
     disConnectMagic();
   };
-  const handleClickReceive = async () => {
+ 
+  const receiveNFTWithMagic = async () => {
     try {
       if (token) {
+        if (nftClaimStatus === 'redeemed') {
+          toast.info("You already redeemed this NFT.");
+          return;
+        } else if (nftClaimStatus === 'returned') {
+          toast.info("You already returned this NFT.");
+          return;
+        }
         setLoading(true);
         const res = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}nftdata`,
           { redemptionUrl: token }
         );
         if (res && res.status === 200 && res.data) {
+          console.log("NFT data to receive: ", res)
+          //add redemption status filed in response from api then not allow following transactions for the NFT which is already redeemed or returen.
           const {
             serial_number,
             hedera_token_id,
@@ -220,10 +229,14 @@ function Wallet() {
               }
             );
             toast.success("Successfully claimed NFT!");
+            setNftClaimStatus("redeemed");
             setTimeout(() => {
               getNft(publicAddress);
             }, 2000);
+          } else {
+            toast.error("Failed to receive NFT.");
           }
+          getBalance(publicAddress);
         }
         setLoading(false);
       } else {
@@ -232,18 +245,28 @@ function Wallet() {
     } catch (e) {
       console.log(e);
       setLoading(false);
+      getBalance(publicAddress);
+      toast.error("Failed to receive NFT.");
     }
     console.log("handleClickSend", token);
   };
-  const handleClickReturn = async () => {
+  const returnNFTWithMagic = async () => {
     try {
       if (token) {
+        if (nftClaimStatus === 'redeemed') {
+          toast.info("You already redeemed this NFT.");
+          return;
+        } else if (nftClaimStatus === 'returned') {
+          toast.info("You already returned this NFT.");
+          return;
+        }
         setLoading(true);
         const res = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}nftdata`,
           { redemptionUrl: token }
         );
         if (res && res.status === 200 && res.data) {
+          //check if already returned or not
           const {
             serial_number,
             hedera_token_id,
@@ -299,10 +322,14 @@ function Wallet() {
             );
             setLoading(false);
             toast.success("Successfully returned NFT!");
+            setNftClaimStatus("returned");
             setTimeout(() => {
               getNft(publicAddress);
             }, 1000);
+          } else {
+            toast.error("Failed to return NFT.");
           }
+          getBalance(publicAddress);
         }
         setLoading(false);
       } else {
@@ -312,10 +339,10 @@ function Wallet() {
       console.log(e);
       setLoading(false);
       toast.error("Failed to return NFT.");
+      getNft(publicAddress);
     }
   };
-
-  const sendNFT = async () => {
+  const sendNFTWithMagic = async () => {
     console.log("sendModalShow");
     if (!validateHederaAddress(targetAddress)) {
       toast.error("Invalid Hedera Address");
@@ -363,6 +390,42 @@ function Wallet() {
 
     setSendModalShow(false);
   };
+
+  const receiveNFTWithHashpack = async () => {
+    if (token) {
+      if (nftClaimStatus === 'redeemed') {
+        toast.info("You already redeemed this NFT.");
+        return;
+      } else if (nftClaimStatus === 'returned') {
+        toast.info("You already returned this NFT.");
+        return;
+      }
+      const res = await claimNft(token);
+      console.log("NFT claim result with hashpack = ", res);
+      if (res) {
+        setNftClaimStatus("redeemed");
+      }
+      setTimeout(() => {
+        getBalance(accountId?.toString() || "");
+      }, 1000)
+    }
+  }
+  const returnNFTWithHashpack = async () => {
+    if (token) {
+      if (nftClaimStatus === 'returned') {
+        toast.info("You already returned this NFT.");
+        return;
+      }
+      const res = await returnNft(token);
+      console.log("NFT return result with hashpack = ", res);
+      if (res) {
+        setNftClaimStatus("returned");
+      }
+      setTimeout(() => {
+        getBalance(accountId?.toString() || "");
+      }, 1000)
+    }
+  }
 
   if (loading) {
     return <Loader />;
@@ -465,7 +528,7 @@ function Wallet() {
                       height="39"
                       viewBox="0 0 39 39"
                       fill="none"
-                      onClick={() => handleClickReceive()}
+                      onClick={() => receiveNFTWithMagic()}
                     >
                       <circle
                         cx="19.4258"
@@ -556,7 +619,7 @@ function Wallet() {
                       viewBox="0 0 39 39"
                       fill="none"
                       className="cursor-pointer"
-                      onClick={() => handleClickReturn()}
+                      onClick={() => returnNFTWithMagic()}
                     >
                       <circle
                         cx="19.4258"
@@ -1075,7 +1138,7 @@ function Wallet() {
                       </div>
                       <div
                         className="cursor-pointer bg-[#6951FF] text-white text-lg font-medium rounded-[25px] px-6 py-2"
-                        onClick={() => sendNFT()}
+                        onClick={() => sendNFTWithMagic()}
                       >
                         Send NFT
                       </div>
@@ -1099,7 +1162,7 @@ function Wallet() {
           <div className="rounded-[25px] border-[1px] border-solid border-[#959595] mb-8">
             <div className="text-center text:xl  md:text-2xl font-bold mb-2 md:mb-4 mt-4 md:mt-6">
               With{" "}
-              <span className="text-[#5E1DFC] font-bold">Magic Wallet</span>
+              <span className="text-[#7A7BB8] font-bold">Hashpack</span>
             </div>
             <div className="flex justify-center mb-4 md:mb-8">
               <img src="/images/magicLogo.png" alt="magic logo" />
@@ -1182,7 +1245,7 @@ function Wallet() {
                   height="39"
                   viewBox="0 0 39 39"
                   fill="none"
-                  onClick={() => claimNft(token)}
+                  onClick={() => receiveNFTWithHashpack()}
                 >
                   <circle
                     cx="19.4258"
@@ -1273,7 +1336,7 @@ function Wallet() {
                   viewBox="0 0 39 39"
                   fill="none"
                   className="cursor-pointer"
-                  onClick={() => returnNft(token)}
+                  onClick={() => returnNFTWithHashpack()}
                 >
                   <circle
                     cx="19.4258"
