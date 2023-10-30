@@ -11,8 +11,8 @@ export interface WalletContextType {
   provider?: WalletServiceProviders;
   accountId?: string | null | AccountId;
   network: string;
-  claimNft: (token: string | null) => Promise<void>;
-  returnNft: (token: string | null) => Promise<void>;
+  claimNft: (token: string | null) => Promise<boolean>;
+  returnNft: (token: string | null) => Promise<boolean>;
   connectWallet: (type: WalletServiceProviders) => Promise<void>;
   disconnectWallet: (type: WalletServiceProviders) => Promise<void>;
   toggleConnectWalletModal: () => void;
@@ -22,8 +22,8 @@ const WalletContext = createContext<WalletContextType>({
   provider: undefined,
   accountId: undefined,
   network: process.env.REACT_APP_HEDERA_NETWORK || "",
-  claimNft: async () => {},
-  returnNft: async () => {},
+  claimNft: async () => false,
+  returnNft: async () => false,
   connectWallet: async () => {},
   disconnectWallet: async () => {},
   toggleConnectWalletModal: () => {},

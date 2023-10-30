@@ -1,17 +1,22 @@
-import React from "react";
+import React, { ReactNode, ReactElement } from 'react';
 
 type Props = {};
+interface LoaderProps {
+  children: ReactNode;
+  isLoading: boolean;
+}
 
-const Loader = (props: Props) => {
+const Loader = ({children, isLoading}: LoaderProps) => {
   return (
-    <section className="bg-[#F0E4FE]">
-        <div className="flex items-center justify-center min-h-screen">
+    <section>
+        {isLoading && <div className="fixed w-full flex items-center justify-center min-h-screen bg-[#dfdede63]">
             <div className="min-w-[200px] pt-8">
                 <div className="flex justify-center">
                     <img src="./images/loader.png" className="animate-spin" alt="loader png" />
                 </div>
             </div>
-        </div>
+        </div>}
+        {children}
     </section>
   );
 };
