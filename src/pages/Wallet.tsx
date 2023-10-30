@@ -1195,10 +1195,10 @@ function Wallet() {
   }
   return (
     <Loader isLoading={loading}>
-      <section className="bg-[#F0E4FE]">
+      <section className="bg-white md:bg-[#F0E4FE]">
         <div className="flex items-center justify-center h-screen">
-          <div>
-            <div className="rounded-[25px] border-[1px] border-solid border-[#959595] mb-8">
+          <div className="w-full md:w-auto">
+            <div className="rounded-[25px] border-0 md:border-[1px] border-solid border-[#959595] mb-8">
               <div className="text-center text-2xl font-bold mb-4 mt-6">
                 With <span className="text-[#7A7BB8] font-bold">Hashpack</span>
               </div>
