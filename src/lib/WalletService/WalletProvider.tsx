@@ -102,9 +102,13 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
     } else if (
       currentlyConnected?.provider === WalletServiceProviders.HASHPACK
     ) {
-      if (await hashStore.claimNft(token))
+      const res = await hashStore.claimNft(token);
+      if (res) {
         toast.success("Successfully claimed the nft through Hashpack", { position: toast.POSITION.TOP_RIGHT });
-        return true;
+      } else {
+        toast.error("Failed to redeem NFT.");
+      }
+      return res;      
     } else {
       toast.error("You need to connect to a wallet before claiming.", { position: toast.POSITION.TOP_RIGHT });
       setIsModalOpen(true);
@@ -125,9 +129,13 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
     } else if (
       currentlyConnected?.provider === WalletServiceProviders.HASHPACK
     ) {
-      await hashStore.returnNft(token)
-      toast.success("Successfully returned the nft through Hashpack");
-      return true;
+      const res = await hashStore.returnNft(token)
+      if (res) {
+        toast.success("Successfully returned the nft through Hashpack");
+      } else {
+        toast.error("Failed to return NFT.");
+      }
+      return res;
     } else {
       toast.error("You need to connect to a wallet before returning.", { position: toast.POSITION.TOP_RIGHT });
       setIsModalOpen(true);
