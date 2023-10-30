@@ -478,7 +478,7 @@ function Wallet() {
         <section className="bg-white md:bg-[#F0E4FE]">
           <div className="flex flex-wrap items-center justify-center min-h-screen">
             {!activeNft ? (
-              <div className="w-full md:w-auto">
+              <div className="w-full md:w-[384px]">
                 <div className="rounded-[25px] border-0 md:border-[1px] border-solid border-[#959595] mb-8">
                   <div className="text-center text-2xl font-bold mb-4 mt-6">
                     With{" "}
@@ -840,7 +840,7 @@ function Wallet() {
             ) : (
               <>
                 {!sentModalShow ? (
-                  <div className="w-full md:w-auto max-w-[calc(100%-20px)] pt-4 bg-white rounded-[25px] shadow-2xl">
+                  <div className="w-full md:w-[384px] max-w-[calc(100%-20px)] pt-4 bg-white rounded-[25px] shadow-2xl">
                     <div className="flex items-center justify-end mb-2 px-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -865,7 +865,7 @@ function Wallet() {
                     <div className="px-8">
                       <div className="mb-4">
                         <img
-                          className="w-full border-[1px] border-solid border-gray rounded-2xl"
+                          className="w-full border-[1px] border-solid border-gray rounded-2xl max-h-[354px]"
                           src={ipfsUtil(activeNft?.image)}
                           alt="ipfs img"
                         />
