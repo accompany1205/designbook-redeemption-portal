@@ -163,11 +163,13 @@ function Wallet() {
           console.log("NFT data to receive: ", res);
           //add redemption status filed in response from api then not allow following transactions for the NFT which is already redeemed or returen.
           const {
+            id,
             serial_number,
             hedera_token_id,
             hedera_id,
             hedera_private_key,
             redemption_status,
+            is_sent_transaction_fee
           } = res.data;
           console.log({res});
           if (redemption_status === "redeemed") {
@@ -193,15 +195,21 @@ function Wallet() {
           const treasuryId = AccountId.fromString(hedera_id);
           const treasuryKey = PrivateKey.fromString(hedera_private_key);
           client.setOperator(treasuryId, treasuryKey);
-          const sendHbar = await new TransferTransaction()
-            .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
-            .addHbarTransfer(publicAddress, Hbar.fromTinybars(150000000))
-            .execute(client);
-          const transactionReceipt = await sendHbar.getReceipt(client);
-          console.log(
-            "The HBAR transfer transaction from brand account to the new account was: " +
-              transactionReceipt.status.toString()
-          );
+          if(!is_sent_transaction_fee){
+            const sendHbar = await new TransferTransaction()
+              .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
+              .addHbarTransfer(publicAddress, Hbar.fromTinybars(150000000))
+              .execute(client);
+            const transactionReceipt = await sendHbar.getReceipt(client);
+            console.log(
+              "The HBAR transfer transaction from brand account to the new account was: " +
+                transactionReceipt.status.toString()
+            );
+            const res = await axios.post(
+              `${process.env.REACT_APP_BACKEND_URL}nftdata/update`,
+              { id }
+            );
+          }
           try {
             let associateBobTx = await new TokenAssociateTransaction()
               .setAccountId(publicAddress)
