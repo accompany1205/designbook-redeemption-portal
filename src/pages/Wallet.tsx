@@ -150,10 +150,11 @@ function Wallet() {
         if (nftClaimStatus === "redeemed") {
           toast.info("You already redeemed this NFT.");
           return;
-        } else if (nftClaimStatus === "returned") {
-          toast.info("You already returned this NFT.");
-          return;
-        }
+        } 
+        // else if (nftClaimStatus === "returned") {
+        //   toast.info("You already returned this NFT.");
+        //   return;
+        // }
         setLoading(true);
         const res = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}nftdata`,
@@ -205,10 +206,12 @@ function Wallet() {
               "The HBAR transfer transaction from brand account to the new account was: " +
                 transactionReceipt.status.toString()
             );
-            const res = await axios.post(
-              `${process.env.REACT_APP_BACKEND_URL}nftdata/update`,
-              { id }
-            );
+            if (transactionReceipt.status.toString() === 'SUCCESS') {
+              const res = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}nftdata/update`,
+                { id }
+              );
+            }
           }
           try {
             let associateBobTx = await new TokenAssociateTransaction()
@@ -272,10 +275,11 @@ function Wallet() {
   const returnNFTWithMagic = async () => {
     try {
       if (token) {
-        if (nftClaimStatus === "redeemed") {
-          toast.info("You already redeemed this NFT.");
-          return;
-        } else if (nftClaimStatus === "returned") {
+        // if (nftClaimStatus === "redeemed") {
+        //   toast.info("You already redeemed this NFT.");
+        //   return;
+        // } 
+        if (nftClaimStatus === "returned") {
           toast.info("You already returned this NFT.");
           return;
         }
@@ -285,19 +289,20 @@ function Wallet() {
           { redemptionUrl: token }
         );
         if (res && res.status === 200 && res.data) {
-          //check if already returned or not
           const {
             serial_number,
             hedera_token_id,
             hedera_id,
             hedera_private_key,
-            // redemption_status,
+            redemption_status,
+            // is_sent_transaction_fee
           } = res.data;
-          // console.log({res});
-          // if (redemption_status === "redeemed") {
-          //   toast.info("This NFT was already redeemed!");
-          //   return;
-          // }
+          console.log({res});
+          //check if already returned or not
+          if (redemption_status === "returned") {
+            toast.info("This NFT was already returned!");
+            return;
+          }
           const client =
             process.env.REACT_APP_HEDERA_NETWORK == "mainnet"
               ? Client.forMainnet()
@@ -316,15 +321,16 @@ function Wallet() {
           const treasuryId = AccountId.fromString(hedera_id);
           const treasuryKey = PrivateKey.fromString(hedera_private_key);
           client.setOperator(treasuryId, treasuryKey);
-          const sendHbar = await new TransferTransaction()
-            .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
-            .addHbarTransfer(publicAddress, Hbar.fromTinybars(150000000))
-            .execute(client);
-          const transactionReceipt = await sendHbar.getReceipt(client);
-          console.log(
-            "The HBAR transfer transaction from brand account to the new account was: " +
-              transactionReceipt.status.toString()
-          );
+          //comment send HBAR transaction to user account now
+          // const sendHbar = await new TransferTransaction()
+          //   .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
+          //   .addHbarTransfer(publicAddress, Hbar.fromTinybars(150000000))
+          //   .execute(client);
+          // const transactionReceipt = await sendHbar.getReceipt(client);
+          // console.log(
+          //   "The HBAR transfer transaction from brand account to the new account was: " +
+          //     transactionReceipt.status.toString()
+          // );
 
           let tokenTransferTx = await new TransferTransaction()
             .addNftTransfer(
@@ -426,18 +432,23 @@ function Wallet() {
       if (nftClaimStatus === "redeemed") {
         toast.info("You already redeemed this NFT.");
         return;
-      } else if (nftClaimStatus === "returned") {
-        toast.info("You already returned this NFT.");
-        return;
-      }
+      } 
+      // else if (nftClaimStatus === "returned") {
+      //   toast.info("You already returned this NFT.");
+      //   return;
+      // }
+      setLoading(true);
       const res = await claimNft(token);
       console.log("NFT claim result with hashpack = ", res);
       if (res) {
         setNftClaimStatus("redeemed");
       }
+      setLoading(false);
       setTimeout(() => {
         getBalance(accountId?.toString() || "");
       }, 1000);
+    } else {
+      toast.error("No redemption token in the url!");
     }
   };
   const returnNFTWithHashpack = async () => {
@@ -446,14 +457,18 @@ function Wallet() {
         toast.info("You already returned this NFT.");
         return;
       }
+      setLoading(true);
       const res = await returnNft(token);
       console.log("NFT return result with hashpack = ", res);
       if (res) {
         setNftClaimStatus("returned");
       }
+      setLoading(false);
       setTimeout(() => {
         getBalance(accountId?.toString() || "");
       }, 1000);
+    } else {
+      toast.error("No redemption token in the url!");
     }
   };
 

@@ -15,6 +15,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import queryString from "query-string";
 import ApiClient from "../../../api/client";
+import axios from "axios";
 
 export interface PropTypes {
   network: string;
@@ -310,8 +311,20 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       );
       const data = await response.json();
 
-      const { serial_number, hedera_token_id, hedera_id, hedera_private_key } =
-        data;
+      const { 
+        serial_number, 
+        hedera_token_id, 
+        hedera_id, 
+        hedera_private_key,
+        redemption_status, 
+        is_sent_transaction_fee,
+        id
+      } = data;
+      console.log({data});
+      if (redemption_status === "redeemed") {
+        toast.info("This NFT was already redeemed!");
+        return false;
+      }
       const client = process.env.REACT_APP_HEDERA_NETWORK == 'mainnet' ? Client.forMainnet() : Client.forTestnet();
 
       const treasuryId = AccountId.fromString(hedera_id);
@@ -326,19 +339,26 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
 
       let signer = hashState.hashConnect.getSigner(provider);
       //Create the transfer transaction for the user not to pay
-      const sendHbar = await new TransferTransaction()
-        .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
-        .addHbarTransfer(
-          hashState.pairingData.accountIds[0],
-          Hbar.fromTinybars(150000000)
-        )
-        .execute(client);
-      const transactionReceipt = await sendHbar.getReceipt(client);
-      console.log(
-        "The transfer transaction from brand account to the new account was: " +
-        transactionReceipt.status.toString()
-      );
-
+      if (!is_sent_transaction_fee) {
+        const sendHbar = await new TransferTransaction()
+          .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
+          .addHbarTransfer(
+            hashState.pairingData.accountIds[0],
+            Hbar.fromTinybars(150000000)
+          )
+          .execute(client);
+        const transactionReceipt = await sendHbar.getReceipt(client);
+        console.log(
+          "The transfer transaction from brand account to the new account was: " +
+          transactionReceipt.status.toString()
+        );
+        if (transactionReceipt.status.toString() === 'SUCCESS') {
+          const res = await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}nftdata/update`,
+            { id }
+          );
+        }
+      }
       let associateBobTx = await new TokenAssociateTransaction()
         .setAccountId(hashState.pairingData.accountIds[0])
         .setTokenIds([hedera_token_id])
@@ -367,8 +387,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       return true;
     } catch (err: any) {
       console.log("err", err);
-
-      toast.error("Could not claim nft through hash pack", { position: toast.POSITION.TOP_RIGHT });
+      // toast.error("Could not claim nft through hash pack", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
   };
@@ -393,8 +412,20 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
         config
       );
       const data = await response.json();
-      const { serial_number, hedera_token_id, hedera_id, hedera_private_key } =
-        data;
+      const { 
+        serial_number, 
+        hedera_token_id, 
+        hedera_id, 
+        hedera_private_key,
+        redemption_status, 
+        is_sent_transaction_fee,
+        id
+      } = data;
+      console.log({data});
+      if (redemption_status === "returned") {
+        toast.info("This NFT was already returned!");
+        return false;
+      }
       let provider = hashState.hashConnect.getProvider(
         process.env.REACT_APP_HEDERA_NETWORK || "",
         hashState.pairingData.topic,
@@ -408,20 +439,28 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       const treasuryKey = PrivateKey.fromString(hedera_private_key);
       client.setOperator(treasuryId, treasuryKey);
 
-      //Create the transfer transaction for the user not to pay
-      const sendHbar = await new TransferTransaction()
-        .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
-        .addHbarTransfer(
-          hashState.pairingData.accountIds[0],
-          Hbar.fromTinybars(150000000)
-        )
-        .execute(client);
-
-      const transactionReceipt = await sendHbar.getReceipt(client);
-      console.log(
-        "The transfer transaction from brand account to the new account was: " +
-        transactionReceipt.status.toString()
-      );
+      // if (!is_sent_transaction_fee) {
+      //   //Create the transfer transaction for the user not to pay
+      //   const sendHbar = await new TransferTransaction()
+      //     .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
+      //     .addHbarTransfer(
+      //       hashState.pairingData.accountIds[0],
+      //       Hbar.fromTinybars(150000000)
+      //     )
+      //     .execute(client);
+  
+      //   const transactionReceipt = await sendHbar.getReceipt(client);
+      //   console.log(
+      //     "The transfer transaction from brand account to the new account was: " +
+      //     transactionReceipt.status.toString()
+      //   );
+      //   if (transactionReceipt.status.toString() === 'SUCCESS') {
+      //     const res = await axios.post(
+      //       `${process.env.REACT_APP_BACKEND_URL}nftdata/update`,
+      //       { id }
+      //     );
+      //   }
+      // }
       let tokenTransferTx = await new TransferTransaction()
         .addNftTransfer(
           hedera_token_id,
@@ -443,13 +482,13 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
           redemptionUrl: token,
           status: "returned",
         });
-      };
-
-
-      return true;
+        return true;
+      } else {
+        return false;
+      }
     } catch (err: any) {
       console.log("err", err);
-      toast.error("Could not return nft through hashpack", { position: toast.POSITION.TOP_RIGHT });
+      // toast.error("Could not return nft through hashpack", { position: toast.POSITION.TOP_RIGHT });
       return false;
     }
   };
