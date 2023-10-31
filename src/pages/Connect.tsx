@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../contexts/AuthContext";
-import WalletContext from "../lib/WalletService/WalletContext";
+import WalletContext, { WalletServiceProviders } from "../lib/WalletService/WalletContext";
 // import AuthContext from "../auth/WalletContext";
 import GlowButton from "../components/buttons/GlowButton";
 import TextInput from "../components/inputs/TextInput";
@@ -29,7 +29,7 @@ function Connect() {
     setAuthMagic,
   } = useContext(AuthContext);
 
-  const { provider, toggleConnectWalletModal } = useContext(WalletContext);
+  const { provider, connectWallet } = useContext(WalletContext);
 
   const state = useLocation().state;
   const navigate = useNavigate();
@@ -85,7 +85,6 @@ function Connect() {
       } else {
         setLoading(false);
       }
-
     } catch (e) {
       console.log(e);
       setLoading(false);
@@ -94,7 +93,7 @@ function Connect() {
 
   const handleClickHashPack = () => {
     console.log("handleClickHashPack", provider);
-    if (!provider) toggleConnectWalletModal();
+    if (!provider) connectWallet(WalletServiceProviders.HASHPACK);
   };
 
   return (
@@ -161,7 +160,9 @@ function Connect() {
               </div>
             </div>
             <div className="text-center mt-4 text-sm font-normal text-[#0F91D2] cursor-pointer">
-              Open the Hashpack extension
+              <a href="https://www.hashpack.app/download">
+                Open the Hashpack extension
+              </a>
             </div>
             <div className="text-center mt-8 text-sm font-normal text-[#696969]">
               Privacy - Terms
@@ -173,7 +174,6 @@ function Connect() {
         </div>
       </section>
     </Loader>
-
   );
 }
 

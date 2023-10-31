@@ -45,6 +45,10 @@ function Wallet() {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [nftClaimStatus, setNftClaimStatus] = useState<string>("none");
+  const [activeDetailImg, setActiveDetailImg] = useState<string>("");
+  const [receiveStatus, setReceiveStatus] = useState<boolean>(false);
+  const [returnStatus, setReturnStatus] = useState<boolean>(false);
+  const [buyStatus, setBuyStatus] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -61,6 +65,10 @@ function Wallet() {
       getNft(publicAddress);
     } else {
       getBalance(accountId?.toString() || "");
+    }
+    if (token) {
+      setReceiveStatus(true);
+      setReturnStatus(true);
     }
   }, []);
 
@@ -150,7 +158,7 @@ function Wallet() {
         if (nftClaimStatus === "redeemed") {
           toast.info("You already redeemed this NFT.");
           return;
-        } 
+        }
         // else if (nftClaimStatus === "returned") {
         //   toast.info("You already returned this NFT.");
         //   return;
@@ -170,9 +178,9 @@ function Wallet() {
             hedera_id,
             hedera_private_key,
             redemption_status,
-            is_sent_transaction_fee
+            is_sent_transaction_fee,
           } = res.data;
-          console.log({res});
+          console.log({ res });
           if (redemption_status === "redeemed") {
             toast.info("This NFT was already redeemed!");
             setLoading(false);
@@ -196,7 +204,7 @@ function Wallet() {
           const treasuryId = AccountId.fromString(hedera_id);
           const treasuryKey = PrivateKey.fromString(hedera_private_key);
           client.setOperator(treasuryId, treasuryKey);
-          if(!is_sent_transaction_fee){
+          if (!is_sent_transaction_fee) {
             const sendHbar = await new TransferTransaction()
               .addHbarTransfer(treasuryId, Hbar.fromTinybars(-150000000))
               .addHbarTransfer(publicAddress, Hbar.fromTinybars(150000000))
@@ -206,7 +214,7 @@ function Wallet() {
               "The HBAR transfer transaction from brand account to the new account was: " +
                 transactionReceipt.status.toString()
             );
-            if (transactionReceipt.status.toString() === 'SUCCESS') {
+            if (transactionReceipt.status.toString() === "SUCCESS") {
               const res = await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}nftdata/update`,
                 { id }
@@ -252,6 +260,7 @@ function Wallet() {
             );
             toast.success("Successfully claimed NFT!");
             setNftClaimStatus("redeemed");
+            setReceiveStatus(false);
             setTimeout(() => {
               getNft(publicAddress);
             }, 2000);
@@ -278,7 +287,7 @@ function Wallet() {
         // if (nftClaimStatus === "redeemed") {
         //   toast.info("You already redeemed this NFT.");
         //   return;
-        // } 
+        // }
         if (nftClaimStatus === "returned") {
           toast.info("You already returned this NFT.");
           return;
@@ -297,7 +306,7 @@ function Wallet() {
             redemption_status,
             // is_sent_transaction_fee
           } = res.data;
-          console.log({res});
+          console.log({ res });
           //check if already returned or not
           if (redemption_status === "returned") {
             toast.info("This NFT was already returned!");
@@ -357,6 +366,7 @@ function Wallet() {
             setLoading(false);
             toast.success("Successfully returned NFT!");
             setNftClaimStatus("returned");
+            setReturnStatus(false);
             setTimeout(() => {
               getNft(publicAddress);
             }, 1000);
@@ -432,7 +442,7 @@ function Wallet() {
       if (nftClaimStatus === "redeemed") {
         toast.info("You already redeemed this NFT.");
         return;
-      } 
+      }
       // else if (nftClaimStatus === "returned") {
       //   toast.info("You already returned this NFT.");
       //   return;
@@ -471,6 +481,25 @@ function Wallet() {
       toast.error("No redemption token in the url!");
     }
   };
+  const download = (url: string) => {
+    fetch(url, {
+      method: "get",
+      headers: {},
+    })
+      .then((response) => {
+        response.arrayBuffer().then(function (buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "image.png"); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   if (authMagic) {
     return (
@@ -482,7 +511,9 @@ function Wallet() {
                 <div className="rounded-[25px] border-0 md:border-[1px] border-solid border-[#959595] mb-8">
                   <div className="text-center text-2xl font-bold mb-4 mt-6">
                     With{" "}
-                    <span className="text-[#5E1DFC] font-bold">Magic Wallet</span>
+                    <span className="text-[#5E1DFC] font-bold">
+                      Magic Wallet
+                    </span>
                   </div>
                   <div className="flex justify-center mb-8">
                     <img src="/images/magicLogo.png" alt="magic logo" />
@@ -563,7 +594,7 @@ function Wallet() {
                     ${getUsdAmount(balance)}
                   </div>
                   <div className="flex items-center justify-center mb-8">
-                    <div className="mr-6">
+                    <div className="mr-10">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="cursor-pointer"
@@ -577,74 +608,74 @@ function Wallet() {
                           cx="19.4258"
                           cy="19.4258"
                           r="19.4258"
-                          fill="#D9D9D9"
+                          fill={receiveStatus ? "#702efd" : "#D9D9D9"}
                         />
                         <path
                           d="M17.4715 12.3975H13.1289V16.74H17.4715V12.3975Z"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M25.8621 12.3975H21.5195V16.74H25.8621V12.3975Z"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M17.4715 20.7861H13.1289V25.1287H17.4715V20.7861Z"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M21.5195 22.2263V20.7861H22.9597"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M24.1863 25.1289H22.3945"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M24.2891 20.7861H25.8604V25.1287"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M14.8905 9.53027H10.2617V14.1591"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M28.7245 14.1591V9.53027H24.0957"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M24.0977 27.995H28.7265V23.3662"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                         <path
                           d="M10.2617 23.3662V27.995H14.8905"
-                          stroke="#696969"
+                          stroke={receiveStatus ? "#ffffff" : "#696969"}
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -654,7 +685,7 @@ function Wallet() {
                         Receive
                       </div>
                     </div>
-                    <div className="mr-6">
+                    <div className="mr-10">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="39"
@@ -668,18 +699,21 @@ function Wallet() {
                           cx="19.4258"
                           cy="19.4258"
                           r="19.4258"
-                          fill="#D9D9D9"
+                          fill={returnStatus ? "#702efd" : "#D9D9D9"}
                         />
                         <path
                           d="M29.1645 14.3092C29.008 14.0721 28.7261 13.9559 28.4523 14.0154L10.8428 17.8418C10.5594 17.9034 10.3444 18.14 10.3052 18.4331C10.266 18.7263 10.4111 19.0131 10.6679 19.15L14.5206 21.2039L14.5418 26.3524C14.5429 26.6265 14.7003 26.8749 14.9447 26.9882C15.0356 27.0303 15.1323 27.0509 15.2284 27.0509C15.3907 27.0509 15.5512 26.9923 15.6785 26.8794L19.2384 23.7261L21.8244 25.0977C22.1341 25.2619 22.5151 25.1629 22.7103 24.8674L29.1645 15.0939C29.3212 14.8568 29.3212 14.5463 29.1645 14.3092Z"
-                          stroke="#696969"
+                          stroke={returnStatus ? "#ffffff" : "#696969"}
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
-                        <path d="M14.4512 21.1187L28.6886 14" stroke="#696969" />
+                        <path
+                          d="M14.4512 21.1187L28.6886 14"
+                          stroke={returnStatus ? "#ffffff" : "#696969"}
+                        />
                         <path
                           d="M28.6894 14.2959L16.8249 22.3044L15.3418 27.0502"
-                          stroke="#696969"
+                          stroke={returnStatus ? "#ffffff" : "#696969"}
                         />
                       </svg>
                       <div className="text-sm font-normal text-center text-[#696969] mt-3">
@@ -693,24 +727,20 @@ function Wallet() {
                         height="39"
                         viewBox="0 0 39 39"
                         fill="none"
-                        className="cursor-pointer"
                       >
                         <circle
                           cx="19.4258"
                           cy="19.4258"
                           r="19.4258"
-                          fill="#D9D9D9"
+                          fill={buyStatus ? "#702efd" : "#D9D9D9"}
                         />
                         <path
-                          d="M29.1645 14.3092C29.008 14.0721 28.7261 13.9559 28.4523 14.0154L10.8428 17.8418C10.5594 17.9034 10.3444 18.14 10.3052 18.4331C10.266 18.7263 10.4111 19.0131 10.6679 19.15L14.5206 21.2039L14.5418 26.3524C14.5429 26.6265 14.7003 26.8749 14.9447 26.9882C15.0356 27.0303 15.1323 27.0509 15.2284 27.0509C15.3907 27.0509 15.5512 26.9923 15.6785 26.8794L19.2384 23.7261L21.8244 25.0977C22.1341 25.2619 22.5151 25.1629 22.7103 24.8674L29.1645 15.0939C29.3212 14.8568 29.3212 14.5463 29.1645 14.3092Z"
-                          stroke="#696969"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                          d="M23.5 19.5625H14.5C14.1925 19.5625 13.9375 19.3075 13.9375 19C13.9375 18.6925 14.1925 18.4375 14.5 18.4375H23.5C23.8075 18.4375 24.0625 18.6925 24.0625 19C24.0625 19.3075 23.8075 19.5625 23.5 19.5625Z"
+                          fill={buyStatus ? "#ffffff" : "#696969"}
                         />
-                        <path d="M14.4512 21.1187L28.6886 14" stroke="#696969" />
                         <path
-                          d="M28.6894 14.2959L16.8249 22.3044L15.3418 27.0502"
-                          stroke="#696969"
+                          d="M19 24.0625C18.6925 24.0625 18.4375 23.8075 18.4375 23.5V14.5C18.4375 14.1925 18.6925 13.9375 19 13.9375C19.3075 13.9375 19.5625 14.1925 19.5625 14.5V23.5C19.5625 23.8075 19.3075 24.0625 19 24.0625Z"
+                          fill={buyStatus ? "#ffffff" : "#696969"}
                         />
                       </svg>
                       <div className="text-sm font-normal text-center text-[#696969] mt-3">
@@ -719,7 +749,7 @@ function Wallet() {
                     </div>
                   </div>
                   <div className="flex items-center justify-center mb-8">
-                    <div className="bg-[#D9D9D9] flex items-center justify-center rounded-[50px] min-w-[240px]">
+                    <div className="bg-[#D9D9D9] flex items-center justify-center rounded-[50px] min-w-[240px] font-[Helvetica Neue]">
                       <div
                         className={
                           isLeft
@@ -734,7 +764,7 @@ function Wallet() {
                         className={
                           !isLeft
                             ? "text-sm font-medium px-12 py-2 rounded-[50px] bg-white shadow-lg shadow-gray-300 cursor-pointer"
-                            : "text-sm font-medium pl-6 pr-10 py-2 rounded-[50px] cursor-pointer"
+                            : "text-sm font-medium pl-8 pr-12 py-2 rounded-[50px] cursor-pointer"
                         }
                         onClick={() => handleClickTabBtn(false)}
                       >
@@ -742,11 +772,11 @@ function Wallet() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex md:block justify-center px-0 md:px-16">
+                  <div className="flex md:block justify-center">
                     {isLeft ? (
                       <>
                         {nftCollection.length === 0 ? (
-                          <div className="mb-8 rounded-[15px] bg-[#F0E4FE] pt-6 pb-4 min-w-[240px]">
+                          <div className="mb-8 rounded-[15px] bg-[#F0E4FE] pt-6 pb-4 min-w-[240px] px-0 md:px-16">
                             <div className="flex flex-wrap items-center justify-around px-6 mb-4">
                               <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]"></div>
                               <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]"></div>
@@ -758,21 +788,21 @@ function Wallet() {
                             </div>
                           </div>
                         ) : (
-                          <div className="mb-8 grid grid-cols-2 gap-4 bg-[#F0E4FE] rounded-[15px]">
+                          <div className="mb-8 grid grid-cols-2 gap-4 rounded-[15px] px-[calc(50%-150px)]">
                             {nftCollection &&
                               nftCollection.length > 0 &&
                               nftCollection.map((collection, index) => (
                                 <div
                                   key={index}
-                                  className="rounded-[15px] flex items-center justify-between m-3 cursor-pointer"
+                                  className="rounded-[15px] flex items-center justify-between m-3 cursor-pointer w-[120px] h-[120px]"
                                   onClick={() => setActiveNFT(collection)}
                                 >
-                                  <div className="">
+                                  <div className="w-full h-full">
                                     <img
                                       src={ipfsUtil(collection.image)}
                                       alt="nft img"
                                       width={100}
-                                      className="rounded-lg"
+                                      className="rounded-lg w-full h-full"
                                     />
                                   </div>
                                   {/* <div className="text-sm">
@@ -801,7 +831,7 @@ function Wallet() {
                         )}
                       </>
                     ) : (
-                      <div className="mb-8 rounded-[15px] bg-white pt-6 pb-4 min-w-[240px]">
+                      <div className="mb-8 rounded-[15px] bg-white pt-6 pb-4 min-w-[240px] mx-0 md:mx-14">
                         <div className="px-6 mb-4">
                           <div className="flex flex-wrap items-center justify-between">
                             <div className="flex items-center">
@@ -866,7 +896,7 @@ function Wallet() {
                       <div className="mb-4">
                         <img
                           className="w-full border-[1px] border-solid border-gray rounded-2xl max-h-[354px]"
-                          src={ipfsUtil(activeNft?.image)}
+                          src={ipfsUtil(activeDetailImg || activeNft?.image)}
                           alt="ipfs img"
                         />
                         <div className="flex items-start mt-4">
@@ -883,15 +913,7 @@ function Wallet() {
                           <div className="text-xl font-bold">{`${activeNft?.name} ${activeNft?.properties.size} ${activeNft?.properties.brand} ${activeNft.properties.category}`}</div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {activeNft.files &&
-                          activeNft.files.length > 0 &&
-                          activeNft.files.map((file: any, index: number) => (
-                            <div key={index} className="flex align-center">
-                              <img src={ipfsUtil(file.uri)} alt="sub img" />
-                            </div>
-                          ))}
-                      </div>
+
                       <div className="mb-4">
                         <div className="flex items-center justify-between">
                           <div className="text-xl font-medium">{`${activeNft?.properties?.collectionName} - ${activeNft?.token_id}`}</div>
@@ -904,7 +926,12 @@ function Wallet() {
                               fill="none"
                               className="cursor-pointer"
                             >
-                              <circle cx="7.5" cy="7.5" r="7.5" fill="#5E1DFC" />
+                              <circle
+                                cx="7.5"
+                                cy="7.5"
+                                r="7.5"
+                                fill="#5E1DFC"
+                              />
                               <path
                                 d="M7.48549 11.2852C9.42666 11.2852 11.0003 9.59048 11.0003 7.5C11.0003 5.40952 9.42666 3.71484 7.48549 3.71484C5.54433 3.71484 3.9707 5.40952 3.9707 7.5C3.9707 9.59048 5.54433 11.2852 7.48549 11.2852Z"
                                 fill="#5E1DFC"
@@ -940,7 +967,12 @@ function Wallet() {
                               fill="none"
                               className="ml-3 cursor-pointer"
                             >
-                              <circle cx="7.5" cy="7.5" r="7.5" fill="#5E1DFC" />
+                              <circle
+                                cx="7.5"
+                                cy="7.5"
+                                r="7.5"
+                                fill="#5E1DFC"
+                              />
                               <path
                                 fillRule="evenodd"
                                 clipRule="evenodd"
@@ -964,9 +996,115 @@ function Wallet() {
                         </div>
                         <div>{`Serial #${activeNft.serial_number}`}</div>
                       </div>
-                      <div className="text-lg mb-6">
+                      <div className="text-lg mb-4">
                         {activeNft?.properties?.description}
                       </div>
+                      {activeNft.files && activeNft.files.length > 0 && (
+                        <div className="mb-4">
+                          <div className="font-medium text-xl mb-2">Files</div>
+                          <div className="rounded-lg border-[1px] border-solid border-black py-2 px-1 mb-4">
+                            <div
+                              className={
+                                activeDetailImg == activeNft?.image
+                                  ? "flex items-center justify-between bg-[#e1dfdf91] rounded-lg px-1 py-1 cursor-pointer"
+                                  : "flex items-center justify-between hover:bg-[#e1dfdf91] rounded-lg px-1 py-1 cursor-pointer"
+                              }
+                              onClick={() =>
+                                setActiveDetailImg(activeNft?.image)
+                              }
+                            >
+                              <div className="flex items-center justify-center">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    fill="currentColor"
+                                    d="M5 21q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Zm0-2h14V5H5v14Zm1-2h12l-3.75-5l-3 4L9 13l-3 4Zm-1 2V5v14Z"
+                                  />
+                                </svg>
+                                <div className="text-lg font-normal ml-2">
+                                  {`Thumbnail`}
+                                </div>
+                              </div>
+                              <div
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  download(ipfsUtil(activeNft?.image));
+                                }}
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path
+                                    fill="currentColor"
+                                    d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"
+                                  />
+                                  <path
+                                    fill="currentColor"
+                                    d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+                            {activeNft.files.map((file: any, index: number) => (
+                              <div
+                                key={index}
+                                className={
+                                  activeDetailImg == file.uri
+                                    ? "flex items-center justify-between bg-[#e1dfdf91] rounded-lg px-1 py-1 cursor-pointer"
+                                    : "flex items-center justify-between hover:bg-[#e1dfdf91] rounded-lg px-1 py-1 cursor-pointer"
+                                }
+                                onClick={() => setActiveDetailImg(file.uri)}
+                              >
+                                <div className="flex items-center justify-center">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      fill="currentColor"
+                                      d="M5 21q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Zm0-2h14V5H5v14Zm1-2h12l-3.75-5l-3 4L9 13l-3 4Zm-1 2V5v14Z"
+                                    />
+                                  </svg>
+                                  <div className="text-lg font-normal ml-2">
+                                    {`image ${index + 1}`}
+                                  </div>
+                                </div>
+                                <div
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    download(ipfsUtil(file.uri));
+                                  }}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path
+                                      fill="currentColor"
+                                      d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"
+                                    />
+                                    <path
+                                      fill="currentColor"
+                                      d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       <div className="mb-8">
                         <div className="font-medium text-xl mb-6">
                           Collection Info
@@ -1018,7 +1156,9 @@ function Wallet() {
                               </div>
                             </div>
                             <div className="inline-block bg-[#efefef] p-3 rounded-[5px]">
-                              <div className="text-large font-medium">Brand</div>
+                              <div className="text-large font-medium">
+                                Brand
+                              </div>
                               <div className="text-center">
                                 {activeNft?.properties.brand}
                               </div>
@@ -1062,13 +1202,17 @@ function Wallet() {
                           </div>
                           <div className="flex flex-wrap items-center justify-between mb-3">
                             <div className="inline-block bg-[#efefef] p-3 rounded-[5px]">
-                              <div className="text-large font-medium">Price</div>
+                              <div className="text-large font-medium">
+                                Price
+                              </div>
                               <div className="text-center">
                                 ${activeNft?.properties.price || 0}
                               </div>
                             </div>
                             <div className="inline-block bg-[#efefef] p-3 rounded-[5px]">
-                              <div className="text-large font-medium">Gender</div>
+                              <div className="text-large font-medium">
+                                Gender
+                              </div>
                               <div className="text-center">
                                 {activeNft?.properties.gender}
                               </div>
@@ -1104,7 +1248,9 @@ function Wallet() {
                           </div>
                           <div className="flex flex-wrap items-center justify-between mb-3">
                             <div className="inline-block bg-[#efefef] p-3 rounded-[5px]">
-                              <div className="text-large font-medium">Color</div>
+                              <div className="text-large font-medium">
+                                Color
+                              </div>
                               <div className="text-center">
                                 {activeNft?.properties.color}
                               </div>
@@ -1137,7 +1283,11 @@ function Wallet() {
                                 return (
                                   <span className="block" key={index}>
                                     {key} :{" "}
-                                    {JSON.parse(activeNft?.properties.perks)[key]}
+                                    {
+                                      JSON.parse(activeNft?.properties.perks)[
+                                        key
+                                      ]
+                                    }
                                   </span>
                                 );
                               })}
@@ -1212,7 +1362,7 @@ function Wallet() {
     <Loader isLoading={loading}>
       <section className="bg-white md:bg-[#F0E4FE]">
         <div className="flex items-center justify-center h-screen">
-          <div className="w-full md:w-auto">
+          <div className="w-full md:w-[384px]">
             <div className="rounded-[25px] border-0 md:border-[1px] border-solid border-[#959595] mb-8">
               <div className="text-center text-2xl font-bold mb-4 mt-6">
                 With <span className="text-[#7A7BB8] font-bold">Hashpack</span>
@@ -1273,7 +1423,9 @@ function Wallet() {
                   viewBox="0 0 23 23"
                   fill="none"
                   onClick={() => {
-                    disconnectWallet(provider || WalletServiceProviders.HASHPACK);
+                    disconnectWallet(
+                      provider || WalletServiceProviders.HASHPACK
+                    );
                     setLoggedIn(false);
                   }}
                   className="cursor-pointer"
