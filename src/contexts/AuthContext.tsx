@@ -3,6 +3,12 @@ import { Magic } from 'magic-sdk';
 import { HederaExtension } from '@magic-ext/hedera';
 import axios from "axios";
 
+
+interface NotificationType {
+  text: string;
+  type: string;
+  timeout: number;
+}
 interface AuthContextState {
   isLoggedIn: boolean;
   setLoggedIn: Function;
@@ -16,6 +22,8 @@ interface AuthContextState {
   setToken: Function;
   authMagic: boolean;
   setAuthMagic: Function;
+  notificationState: NotificationType | null;
+  setNotificationState: Function;
 }
 
 const HBAR_PRICE_URL = process.env.REACT_APP_COIN_PRICE_API_URL || `https://api.coingecko.com/api/v3/simple/price?ids=hedera-hashgraph,tether&vs_currencies=usd`;
@@ -38,6 +46,7 @@ const AuthProvider: React.FC = ({ children }) => {
   const [hBarPrice, setHBarPrice] = useState<number>(0.047);
   const [token, setToken] = useState<string>('');
   const [authMagic, setAuthMagic] = useState<boolean>(false);
+  const [notificationState, setNotificationState] = useState<NotificationType | null>(null);
 
   useEffect(()=>{
     const timer = setInterval(async()=>{
@@ -65,7 +74,8 @@ const AuthProvider: React.FC = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setLoggedIn, publicAddress, setPublicAddress, userMetadata, setUserMetadata, hBarPrice, disConnectMagic, token, setToken, authMagic, setAuthMagic}}>
+    <AuthContext.Provider value={{ isLoggedIn, setLoggedIn, publicAddress, setPublicAddress, userMetadata, setUserMetadata, hBarPrice, disConnectMagic, token, setToken, authMagic, setAuthMagic, notificationState, setNotificationState
+    }}>
       {children}
     </AuthContext.Provider>
   );

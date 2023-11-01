@@ -7,7 +7,6 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { toast } from "react-toastify";
 import { AuthContext } from "../contexts/AuthContext";
 import WalletContext, { WalletServiceProviders } from "../lib/WalletService/WalletContext";
 // import AuthContext from "../auth/WalletContext";
@@ -27,6 +26,7 @@ function Connect() {
     setToken,
     authMagic,
     setAuthMagic,
+    setNotificationState
   } = useContext(AuthContext);
 
   const { provider, connectWallet } = useContext(WalletContext);
@@ -61,7 +61,8 @@ function Connect() {
     try {
       if (validateEmail(email)) {
         setEmail("");
-        toast.error(validateEmail(email));
+        // toast.error(validateEmail(email));
+        setNotificationState({text: "Invalid email address!", type: 'error', timeout: 3000})
         return;
       }
       setLoading(true);
