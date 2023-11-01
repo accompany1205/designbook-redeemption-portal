@@ -184,8 +184,7 @@ function Wallet() {
           console.log({ res });
           if (redemption_status === "redeemed") {
             // toast.info("This NFT was already redeemed!");
-          setNotificationState({type: NotificationTypeValue.INFO, text: "This NFT was already redeemed!", timeout: 3000})
-
+            setNotificationState({type: NotificationTypeValue.INFO, text: "This NFT was already redeemed!", timeout: 3000})
             setLoading(false);
             return;
           }
@@ -268,7 +267,7 @@ function Wallet() {
             setReceiveStatus(false);
             setTimeout(() => {
               getNft(publicAddress);
-            }, 2000);
+            }, 1000);
           } else {
             setNotificationState({type: NotificationTypeValue.ERROR, text: "Failed to receive NFT.", timeout: 3000})
           }
@@ -317,8 +316,8 @@ function Wallet() {
           //check if already returned or not
           if (redemption_status === "returned") {
           setNotificationState({type: NotificationTypeValue.INFO, text: "This NFT was already returned!", timeout: 3000})
-
-            return;
+          setLoading(false);
+          return;
           }
           const client =
             process.env.REACT_APP_HEDERA_NETWORK == "mainnet"
@@ -372,7 +371,7 @@ function Wallet() {
               }
             );
             setLoading(false);
-          setNotificationState({type: NotificationTypeValue.SUCCESS, text: "Successfully returned NFT!", timeout: 3000})
+            setNotificationState({type: NotificationTypeValue.SUCCESS, text: "Successfully returned NFT!", timeout: 3000})
             
             setNftClaimStatus("returned");
             setReturnStatus(false);
@@ -460,7 +459,10 @@ function Wallet() {
       const res = await claimNft(token);
       console.log("NFT claim result with hashpack = ", res);
       if (res) {
+        setNotificationState({type: NotificationTypeValue.SUCCESS, text: "Successfully claimed NFT!", timeout: 3000})
         setNftClaimStatus("redeemed");
+      } else {
+        setNotificationState({type: NotificationTypeValue.ERROR, text: "Failed to receive NFT.", timeout: 3000})
       }
       setLoading(false);
       setTimeout(() => {
@@ -480,7 +482,10 @@ function Wallet() {
       const res = await returnNft(token);
       console.log("NFT return result with hashpack = ", res);
       if (res) {
+        setNotificationState({type: NotificationTypeValue.SUCCESS, text: "Successfully returned NFT!", timeout: 3000})
         setNftClaimStatus("returned");
+      } else {
+        setNotificationState({type: NotificationTypeValue.ERROR, text: "Failed to return NFT.", timeout: 3000})
       }
       setLoading(false);
       setTimeout(() => {

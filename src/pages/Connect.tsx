@@ -161,7 +161,7 @@ function Connect() {
               </div>
             </div>
             <div className="text-center mt-4 text-sm font-normal text-[#0F91D2] cursor-pointer">
-              <a href="https://www.hashpack.app/download">
+              <a href="https://www.hashpack.app/download" rel="noreferrer" target="_blank">
                 Open the Hashpack extension
               </a>
             </div>
