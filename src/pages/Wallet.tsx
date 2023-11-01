@@ -608,7 +608,7 @@ function Wallet() {
                     ${getUsdAmount(balance)}
                   </div>
                   <div className="flex items-center justify-center mb-8">
-                    <div className="mr-10">
+                    <div className="flex flex-col items-center justify-center mr-10">
                       {/* <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className="cursor-pointer" onClick={() => receiveNFTWithMagic()}>
                         <circle cx="19.4258" cy="19.4258" r="19.4258" fill={receiveStatus ? "#5E1DFC" : "#D9D9D9"} />
                         <g clip-path="url(#clip0_570_873)">
@@ -633,7 +633,7 @@ function Wallet() {
                         Receive
                       </div>
                     </div>
-                    <div className="mr-10">
+                    <div className="flex flex-col items-center justify-center mr-10">
                       {/* <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className="cursor-pointer" onClick={() => returnNFTWithMagic()}>
                         <circle cx="19.4258" cy="19.4258" r="19.4258" fill={returnStatus ? "#5E1DFC" : "#D9D9D9"} />
                         <path d="M19.85 22.2497H18.44C17.4425 22.2497 16.625 21.4097 16.625 20.3747C16.625 20.0672 16.88 19.8122 17.1875 19.8122C17.495 19.8122 17.75 20.0672 17.75 20.3747C17.75 20.7872 18.0575 21.1247 18.44 21.1247H19.85C20.1425 21.1247 20.375 20.8622 20.375 20.5397C20.375 20.1347 20.2625 20.0747 20.0075 19.9847L17.75 19.1972C17.27 19.0322 16.625 18.6797 16.625 17.5772C16.625 16.6397 17.3675 15.8672 18.275 15.8672H19.685C20.6825 15.8672 21.5 16.7072 21.5 17.7422C21.5 18.0497 21.245 18.3047 20.9375 18.3047C20.63 18.3047 20.375 18.0497 20.375 17.7422C20.375 17.3297 20.0675 16.9922 19.685 16.9922H18.275C17.9825 16.9922 17.75 17.2547 17.75 17.5772C17.75 17.9822 17.8625 18.0422 18.1175 18.1322L20.375 18.9197C20.855 19.0847 21.5 19.4372 21.5 20.5397C21.5 21.4847 20.7575 22.2497 19.85 22.2497Z" stroke={returnStatus ? "#ffffff" : "#696969"} />
@@ -643,7 +643,7 @@ function Wallet() {
                         <path d="M26.5605 11.0019C26.703 11.0019 26.8455 11.0544 26.958 11.1669C27.1755 11.3844 27.1755 11.7444 26.958 11.9619L23.208 15.7119C22.9905 15.9294 22.6305 15.9294 22.413 15.7119C22.1955 15.4944 22.1955 15.1344 22.413 14.9169L26.163 11.1669C26.2755 11.0544 26.418 11.0019 26.5605 11.0019Z" stroke={returnStatus ? "#ffffff" : "#696969"} />
                       </svg> */}
                       <img 
-                        src={receiveStatus ? "/images/rerutn-enable.png" : "/images/return-disable.png"} 
+                        src={receiveStatus ? "/images/return-enable.png" : "/images/return-disable.png"} 
                         alt="receive" 
                         onClick={() => returnNFTWithMagic()}
                       />
@@ -1376,8 +1376,8 @@ function Wallet() {
               <div className="text-4xl font-bold text-center mb-12">
                 ${getUsdAmount(balance)}
               </div>
-              <div className="flex items-center justify-center mb-8">
-                <div className="mr-10">
+              <div className="flex items-center justify-center gap-x-10 mb-8">
+                <div className="flex flex-col items-center justify-center ">
                   {/* <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className="cursor-pointer" onClick={() => receiveNFTWithHashpack()}>
                     <circle cx="19.4258" cy="19.4258" r="19.4258" fill={receiveStatus ? "#5E1DFC" : "#D9D9D9"} />
                     <g clip-path="url(#clip0_570_873)">
@@ -1402,7 +1402,7 @@ function Wallet() {
                     Receive
                   </div>
                 </div>
-                <div className="mr-10">
+                <div className="flex flex-col items-center justify-center ">
                   {/* <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className="cursor-pointer" onClick={() => returnNFTWithHashpack()}>
                     <circle cx="19.4258" cy="19.4258" r="19.4258" fill={returnStatus ? "#5E1DFC" : "#D9D9D9"} />
                     <path d="M19.85 22.2497H18.44C17.4425 22.2497 16.625 21.4097 16.625 20.3747C16.625 20.0672 16.88 19.8122 17.1875 19.8122C17.495 19.8122 17.75 20.0672 17.75 20.3747C17.75 20.7872 18.0575 21.1247 18.44 21.1247H19.85C20.1425 21.1247 20.375 20.8622 20.375 20.5397C20.375 20.1347 20.2625 20.0747 20.0075 19.9847L17.75 19.1972C17.27 19.0322 16.625 18.6797 16.625 17.5772C16.625 16.6397 17.3675 15.8672 18.275 15.8672H19.685C20.6825 15.8672 21.5 16.7072 21.5 17.7422C21.5 18.0497 21.245 18.3047 20.9375 18.3047C20.63 18.3047 20.375 18.0497 20.375 17.7422C20.375 17.3297 20.0675 16.9922 19.685 16.9922H18.275C17.9825 16.9922 17.75 17.2547 17.75 17.5772C17.75 17.9822 17.8625 18.0422 18.1175 18.1322L20.375 18.9197C20.855 19.0847 21.5 19.4372 21.5 20.5397C21.5 21.4847 20.7575 22.2497 19.85 22.2497Z" stroke={returnStatus ? "#ffffff" : "#696969"} />
