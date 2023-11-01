@@ -7,9 +7,8 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { toast } from "react-toastify";
 import { AuthContext } from "../contexts/AuthContext";
-import WalletContext from "../lib/WalletService/WalletContext";
+import WalletContext, { WalletServiceProviders } from "../lib/WalletService/WalletContext";
 // import AuthContext from "../auth/WalletContext";
 import GlowButton from "../components/buttons/GlowButton";
 import TextInput from "../components/inputs/TextInput";
@@ -27,9 +26,10 @@ function Connect() {
     setToken,
     authMagic,
     setAuthMagic,
+    setNotificationState
   } = useContext(AuthContext);
 
-  const { provider, toggleConnectWalletModal } = useContext(WalletContext);
+  const { provider, connectWallet } = useContext(WalletContext);
 
   const state = useLocation().state;
   const navigate = useNavigate();
@@ -61,7 +61,8 @@ function Connect() {
     try {
       if (validateEmail(email)) {
         setEmail("");
-        toast.error(validateEmail(email));
+        // toast.error(validateEmail(email));
+        setNotificationState({text: "Invalid email address!", type: 'error', timeout: 3000})
         return;
       }
       setLoading(true);
@@ -85,7 +86,6 @@ function Connect() {
       } else {
         setLoading(false);
       }
-
     } catch (e) {
       console.log(e);
       setLoading(false);
@@ -94,14 +94,14 @@ function Connect() {
 
   const handleClickHashPack = () => {
     console.log("handleClickHashPack", provider);
-    if (!provider) toggleConnectWalletModal();
+    if (!provider) connectWallet(WalletServiceProviders.HASHPACK);
   };
 
   return (
     <Loader isLoading={loading}>
       <section className="bg-white md:bg-[#F0E4FE]">
         <div className="flex items-center justify-center h-screen">
-          <div className="rounded-[25px] bg-white py-12 px-4 md:px-16">
+          <div className="rounded-[25px] bg-white py-12 w-full md:w-[384px] max-w-[calc(100%-20px)]">
             <div className="text-center text-2xl font-medium mb-4">
               Log in <span className="text-[#5E1DFC] font-bold">to wallet</span>
             </div>
@@ -112,7 +112,7 @@ function Connect() {
             <div className="flex justify-center mb-8">
               <img src="/images/magicLogo.png" alt="magic logo" />
             </div>
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-4 px-4 md:px-12">
               <input
                 type="email"
                 className="rounded-[15px] border-[1px] border-solid border-[#C8C7C7] text-center py-3 px-4 w-4/5"
@@ -121,7 +121,7 @@ function Connect() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center px-4 md:px-12">
               <button
                 onClick={() => handleSubmit()}
                 className="rounded-[50px] border-[1px] border-solid border-[#C8C7C7] text-center py-3 px-4 w-4/5 text-white bg-[#6951FF] font-medium cursor-pointer"
@@ -133,7 +133,7 @@ function Connect() {
             <div className="flex justify-center mt-4 text-[#696969] font-normal text-sm">
               OR
             </div>
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-4 px-4 md:px-12">
               <div
                 className="flex justify-center items-center rounded-[50px] border-[1px] border-solid border-[#C8C7C7] text-center py-3 w-4/5 text-[#696969] font-medium cursor-pointer"
                 onClick={() => handleClickHashPack()}
@@ -161,7 +161,9 @@ function Connect() {
               </div>
             </div>
             <div className="text-center mt-4 text-sm font-normal text-[#0F91D2] cursor-pointer">
-              Open the Hashpack extension
+              <a href="https://www.hashpack.app/download" rel="noreferrer" target="_blank">
+                Open the Hashpack extension
+              </a>
             </div>
             <div className="text-center mt-8 text-sm font-normal text-[#696969]">
               Privacy - Terms
@@ -173,7 +175,6 @@ function Connect() {
         </div>
       </section>
     </Loader>
-
   );
 }
 

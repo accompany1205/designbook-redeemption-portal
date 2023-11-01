@@ -104,9 +104,9 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
     ) {
       const res = await hashStore.claimNft(token);
       if (res) {
-        toast.success("Successfully claimed the nft through Hashpack", { position: toast.POSITION.TOP_RIGHT });
+        // toast.success("Successfully claimed the nft through Hashpack", { position: toast.POSITION.TOP_RIGHT });
       } else {
-        toast.error("Failed to redeem NFT.");
+        // toast.error("Failed to redeem NFT.");
       }
       return res;      
     } else {
@@ -131,9 +131,9 @@ const WalletProvider = (props: { children: React.ReactNode }) => {
     ) {
       const res = await hashStore.returnNft(token)
       if (res) {
-        toast.success("Successfully returned the nft through Hashpack");
+        // toast.success("Successfully returned the nft through Hashpack");
       } else {
-        toast.error("Failed to return NFT.");
+        // toast.error("Failed to return NFT.");
       }
       return res;
     } else {

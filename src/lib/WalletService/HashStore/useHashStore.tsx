@@ -322,7 +322,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       } = data;
       console.log({data});
       if (redemption_status === "redeemed") {
-        toast.info("This NFT was already redeemed!");
+        // toast.info("This NFT was already redeemed!");
         return false;
       }
       const client = process.env.REACT_APP_HEDERA_NETWORK == 'mainnet' ? Client.forMainnet() : Client.forTestnet();
@@ -423,7 +423,7 @@ const useHashStore = ({ network, debug = false }: PropTypes) => {
       } = data;
       console.log({data});
       if (redemption_status === "returned") {
-        toast.info("This NFT was already returned!");
+        // toast.info("This NFT was already returned!");
         return false;
       }
       let provider = hashState.hashConnect.getProvider(
