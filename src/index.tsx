@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AuthRoot from "./pages/AuthRoot";
 // import { WalletConnectionProvider } from "./auth/WalletConnectionProvider";
 import WalletProvider from "./lib/WalletService/WalletProvider";
+import Notification from "./components/Notification";
 
 const router = createBrowserRouter([
   {
@@ -42,8 +43,9 @@ ReactDOM.render(
     {/* <HashConnectAPIProvider debug> */}
     <AuthProvider>
       <WalletProvider>
-        <RouterProvider router={router} />
-        <ToastContainer autoClose={5000} />
+        <Notification>
+          <RouterProvider router={router} />
+        </Notification>
       </WalletProvider>
     </AuthProvider>
     {/* </HashConnectAPIProvider> */}
