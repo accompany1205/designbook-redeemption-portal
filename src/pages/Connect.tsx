@@ -102,15 +102,15 @@ function Connect() {
       <section className="bg-white md:bg-[#F0E4FE]">
         <div className="flex items-center justify-center h-screen">
           <div className="rounded-[25px] bg-white py-12 w-full md:w-[384px] max-w-[calc(100%-20px)]">
-            <div className="text-center text-2xl font-medium mb-4">
+            <div className="text-center text-2xl font-medium mb-6">
               Log in <span className="text-[#5E1DFC] font-bold">to wallet</span>
             </div>
-            <div className="text-center text-md font-normal mb-4">
-              Sign in to{" "}
-              <span className="text-[#5E1DFC] font-medium"> Magic</span>
-            </div>
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-4">
               <img src="/images/magicLogo.png" alt="magic logo" />
+            </div>
+            <div className="text-center text-md font-normal mb-4">
+              Connect with{" "} 
+              <span className="text-[#5E1DFC] font-medium"> Magic Wallet</span>
             </div>
             <div className="flex justify-center mb-4 px-4 md:px-12">
               <input
@@ -160,12 +160,13 @@ function Connect() {
                 Connect Wallet
               </div>
             </div>
-            <div className="text-center mt-4 text-sm font-normal text-[#0F91D2] cursor-pointer">
-              <a href="https://www.hashpack.app/download" rel="noreferrer" target="_blank">
-                Open the Hashpack extension
-              </a>
+            <div className="text-center mt-4 text-sm font-normal cursor-pointer">
+              Get{' '}
+              <a className="text-[#0F91D2]" href="https://www.hashpack.app/download" rel="noreferrer" target="_blank">
+                Hashpack
+              </a>{' '}wallet - Desktop
             </div>
-            <div className="text-center mt-8 text-sm font-normal text-[#696969]">
+            <div className="text-center mt-8 text-sm font-normal text-[#696969] cursor-pointer" onClick={()=>navigate('/terms-policy')}>
               Privacy - Terms
             </div>
             <div className="text-center mt-4 text-xs font-normal text-[#959595]">
