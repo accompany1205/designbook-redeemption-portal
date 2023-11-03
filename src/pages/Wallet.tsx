@@ -1185,7 +1185,7 @@ function Wallet() {
                 With <span className="text-[#7A7BB8] font-bold">HashPack</span>
               </div>
               <div className="flex justify-center mb-8">
-                <img src="/images/magicLogo.png" alt="magic logo" />
+                <img src="/images/logo-hashpack.png" alt="magic logo" />
               </div>
             </div>
             <div className="bg-white sm:bg-[#F5F5F5] min-w-[270px] rounded-[25px] min-w-[300px] pt-4 pb-8">
