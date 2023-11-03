@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Wallet from "./pages/Wallet";
 import Root from "./pages/Root";
 import Connect from "./pages/Connect";
+import TermsView from "./pages/Terms";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "./contexts/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
             element: <Wallet />,
           },
         ],
+      },
+      {
+        path: "/terms-policy",
+        element: <TermsView />,
       },
     ],
   },
