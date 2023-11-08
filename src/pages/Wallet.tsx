@@ -600,7 +600,7 @@ function Wallet() {
                       />
                     </svg>
                   </div>
-                  <div className="bg-white md:bg-[#f0e4fe] text-sm font-medium text-center text-[#696969] mb-4 py-2">
+                  <div className="bg-[#f0e4fe] md:bg-[#f0e4fe] text-sm font-medium text-center text-[#696969] mb-4 py-2">
                     {userMetadata?.email}
                   </div>
                   <div className="text-sm font-medium text-center text-[#696969] mb-4">
