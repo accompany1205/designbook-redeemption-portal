@@ -818,7 +818,7 @@ function Wallet() {
                   <div className="flex md:block justify-center">
                     {isLeft ? (
                       <>
-                        {nftCollection.length !== 0 ? (
+                        {nftCollection.length === 0 ? (
                           <div className="flex justify-center flex-wrap">
                             <div className="mb-8 rounded-[15px] max-w-[270px] bg-[#F0E4FE] pt-6 pb-4 min-w-[240px] px-0 md:px-2">
                               <div className="flex flex-wrap items-center justify-around px-3 mb-4">
