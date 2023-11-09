@@ -818,24 +818,26 @@ function Wallet() {
                   <div className="flex md:block justify-center">
                     {isLeft ? (
                       <>
-                        {nftCollection.length === 0 ? (
-                          <div className="mb-8 rounded-[15px] bg-[#F0E4FE] pt-6 pb-4 min-w-[240px] px-0 md:px-16">
-                            <div className="flex flex-wrap items-center justify-around px-6 mb-4">
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
-                                <img src="images/glasses.png" alt="glasses png" />
+                        {nftCollection.length !== 0 ? (
+                          <div className="flex justify-center flex-wrap">
+                            <div className="mb-8 rounded-[15px] max-w-[270px] bg-[#F0E4FE] pt-6 pb-4 min-w-[240px] px-0 md:px-2">
+                              <div className="flex flex-wrap items-center justify-around px-3 mb-4">
+                                <div className="rounded-full w-[36px] h-[36px] bg-[#5E1DFC]">
+                                  <img src="images/glasses.png" alt="glasses png" />
+                                </div>
+                                <div className="rounded-full w-[36px] h-[36px] bg-[#5E1DFC]">
+                                  <img src="images/bags.png" alt="bags png" />
+                                </div>
+                                <div className="rounded-full w-[36px] h-[36px] bg-[#5E1DFC]">
+                                  <img src="images/shoes.png" alt="shoes png" />
+                                </div>
+                                <div className="rounded-full w-[36px] h-[36px] bg-[#5E1DFC]">
+                                  <img src="images/watch.png" alt="watch png" />
+                                </div>
                               </div>
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
-                                <img src="images/bags.png" alt="bags png" />
+                              <div className="text-base font-normal text-[#696969] text-center px-6">
+                                No digital collectibles... Yet
                               </div>
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
-                                <img src="images/shoes.png" alt="shoes png" />
-                              </div>
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
-                                <img src="images/watch.png" alt="watch png" />
-                              </div>
-                            </div>
-                            <div className="text-base font-normal text-[#696969] text-center px-6">
-                              No digital collectibles... Yet
                             </div>
                           </div>
                         ) : (
