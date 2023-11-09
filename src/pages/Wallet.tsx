@@ -210,7 +210,7 @@ function Wallet() {
             new MagicProvider(process.env.REACT_APP_HEDERA_NETWORK),
             publicKeyDer,
             magicSign,
-            () => {}
+            () => { }
           );
           const treasuryId = AccountId.fromString(hedera_id);
           const treasuryKey = PrivateKey.fromString(hedera_private_key);
@@ -223,7 +223,7 @@ function Wallet() {
             const transactionReceipt = await sendHbar.getReceipt(client);
             console.log(
               "The HBAR transfer transaction from brand account to the new account was: " +
-                transactionReceipt.status.toString()
+              transactionReceipt.status.toString()
             );
             if (transactionReceipt.status.toString() === "SUCCESS") {
               const res = await axios.post(
@@ -245,7 +245,7 @@ function Wallet() {
               await associateBobTxRes.getReceiptWithSigner(magicWallet);
             console.log(
               "The token associated transaction status: " +
-                associatedBobTxReceipt.status.toString()
+              associatedBobTxReceipt.status.toString()
             );
           } catch (e) {
             console.log(e);
@@ -364,7 +364,7 @@ function Wallet() {
             new MagicProvider(process.env.REACT_APP_HEDERA_NETWORK),
             publicKeyDer,
             magicSign,
-            () => {}
+            () => { }
           );
           const treasuryId = AccountId.fromString(hedera_id);
           const treasuryKey = PrivateKey.fromString(hedera_private_key);
@@ -461,7 +461,7 @@ function Wallet() {
         new MagicProvider(process.env.REACT_APP_HEDERA_NETWORK),
         publicKeyDer,
         magicSign,
-        () => {}
+        () => { }
       );
       const treasuryId = AccountId.fromString(publicAddress);
       let tokenTransferTx = await new TransferTransaction()
@@ -731,9 +731,8 @@ function Wallet() {
                         onClick={() => receiveNFTWithMagic()}
                       />
                       <div
-                        className={`text-sm fonnormalum text-left text-[${
-                          receiveStatus ? "#5E1DFC" : "#696969"
-                        }] mt-3`}
+                        className={`text-sm fonnormalum text-left text-[${receiveStatus ? "#5E1DFC" : "#696969"
+                          }] mt-3`}
                       >
                         Receive
                       </div>
@@ -758,9 +757,8 @@ function Wallet() {
                         onClick={() => returnNFTWithMagic()}
                       />
                       <div
-                        className={`text-sm fonnormalum text-left text-[${
-                          returnStatus ? "#5E1DFC" : "#696969"
-                        }] mt-3`}
+                        className={`text-sm fonnormalum text-left text-[${returnStatus ? "#5E1DFC" : "#696969"
+                          }] mt-3`}
                       >
                         Return
                       </div>
@@ -823,10 +821,18 @@ function Wallet() {
                         {nftCollection.length === 0 ? (
                           <div className="mb-8 rounded-[15px] bg-[#F0E4FE] pt-6 pb-4 min-w-[240px] px-0 md:px-16">
                             <div className="flex flex-wrap items-center justify-around px-6 mb-4">
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]"></div>
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]"></div>
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]"></div>
-                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]"></div>
+                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
+                                <img src="images/glasses.png" alt="glasses png" />
+                              </div>
+                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
+                                <img src="images/bags.png" alt="bags png" />
+                              </div>
+                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
+                                <img src="images/shoes.png" alt="shoes png" />
+                              </div>
+                              <div className="rounded-full w-[23px] h-[23px] bg-[#5E1DFC]">
+                                <img src="images/watch.png" alt="watch png" />
+                              </div>
                             </div>
                             <div className="text-base font-normal text-[#696969] text-center px-6">
                               No digital collectibles... Yet
@@ -1338,7 +1344,7 @@ function Wallet() {
                                     {key} :{" "}
                                     {
                                       JSON.parse(activeNft?.properties.perks)[
-                                        key
+                                      key
                                       ]
                                     }
                                   </span>
@@ -1522,9 +1528,8 @@ function Wallet() {
                     onClick={() => receiveNFTWithHashpack()}
                   />
                   <div
-                    className={`text-sm fonnormalum text-left text-[${
-                      receiveStatus ? "#5E1DFC" : "#696969"
-                    }] mt-3`}
+                    className={`text-sm fonnormalum text-left text-[${receiveStatus ? "#5E1DFC" : "#696969"
+                      }] mt-3`}
                   >
                     Receive
                   </div>
@@ -1549,9 +1554,8 @@ function Wallet() {
                     onClick={() => returnNFTWithHashpack()}
                   />
                   <div
-                    className={`text-sm fonnormalum text-left text-[${
-                      returnStatus ? "#5E1DFC" : "#696969"
-                    }] mt-3`}
+                    className={`text-sm fonnormalum text-left text-[${returnStatus ? "#5E1DFC" : "#696969"
+                      }] mt-3`}
                   >
                     Return
                   </div>
