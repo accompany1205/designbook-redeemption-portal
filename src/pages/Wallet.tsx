@@ -652,7 +652,7 @@ function Wallet() {
                         onClick={() => returnNFTWithMagic()}
                       />
                       <div className={`text-sm fonnormalum text-left text-[${returnStatus ? "#5E1DFC" : "#696969"}] mt-3`}>
-                        returnStatus
+                        Return
                       </div>
                     </div>
                     <div>
