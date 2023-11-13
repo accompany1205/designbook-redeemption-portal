@@ -273,19 +273,19 @@ function Wallet() {
             setNotificationState({
               type: NotificationTypeValue.SUCCESS,
               text: "Successfully claimed NFT!",
-              timeout: 3000,
+              timeout: 3500,
             });
 
             setNftClaimStatus("redeemed");
             setReceiveStatus(false);
             setTimeout(() => {
               getNft(publicAddress);
-            }, 1000);
+            }, 3000);
           } else {
             setNotificationState({
               type: NotificationTypeValue.ERROR,
               text: "Failed to receive NFT.",
-              timeout: 3000,
+              timeout: 3500,
             });
           }
           getBalance(publicAddress);
@@ -406,19 +406,19 @@ function Wallet() {
             setNotificationState({
               type: NotificationTypeValue.SUCCESS,
               text: "Successfully returned NFT!",
-              timeout: 3000,
+              timeout: 3500,
             });
 
             setNftClaimStatus("returned");
             setReturnStatus(false);
             setTimeout(() => {
               getNft(publicAddress);
-            }, 1000);
+            }, 3000);
           } else {
             setNotificationState({
               type: NotificationTypeValue.ERROR,
               text: "Failed to return NFT.",
-              timeout: 3000,
+              timeout: 3500,
             });
           }
           getBalance(publicAddress);
@@ -483,16 +483,16 @@ function Wallet() {
         setNotificationState({
           type: NotificationTypeValue.SUCCESS,
           text: "Successfully sent NFT!",
-          timeout: 3000,
+          timeout: 3500,
         });
         setTimeout(() => {
           getNft(publicAddress);
-        }, 1000);
+        }, 3000);
       } else {
         setNotificationState({
           type: NotificationTypeValue.ERROR,
           text: "Failed to send NFT.",
-          timeout: 3000,
+          timeout: 3500,
         });
       }
       setLoading(false);
